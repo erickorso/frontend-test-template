@@ -2,3 +2,355 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* Design tokens */
+:root {
+  /* Colors */
+  --color-primary: 17 24 39; /* slate-900 default fallback */
+  --color-secondary: 55 65 81; /* gray-700 */
+  --color-accent: 59 130 246; /* blue-500 */
+  --color-success: 34 197 94; /* green-500 */
+  --color-warning: 245 158 11; /* amber-500 */
+  --color-error: 239 68 68; /* red-500 */
+
+  --color-bg: 249 250 251; /* gray-50 */
+  --color-surface: 255 255 255; /* white */
+  --color-border: 229 231 235; /* gray-200 */
+  --color-text: 17 24 39; /* slate-900 */
+  --color-muted: 107 114 128; /* gray-500 */
+  --color-headline: 88 86 96; /* #585660 */
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.06), 0 1px 3px 0 rgb(0 0 0 / 0.1);
+
+  /* Spacing System */
+  --spacing-xs: 4px;   /* 0.25rem */
+  --spacing-sm: 8px;   /* 0.5rem */
+  --spacing-md: 16px;  /* 1rem */
+  --spacing-lg: 24px;  /* 1.5rem */
+  --spacing-xl: 32px;  /* 2rem */
+  --spacing-2xl: 40px; /* 2.5rem */
+  --spacing-3xl: 48px; /* 3rem */
+  --spacing-4xl: 64px; /* 4rem */
+  --spacing-5xl: 80px; /* 5rem */
+  --spacing-6xl: 96px; /* 6rem */
+
+  /* Typography */
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-archivo: var(--font-archivo), Archivo, ui-sans-serif;
+  --fs-display: 2.25rem; /* 36px */
+  --fs-h1: 2rem; /* 32px */
+  --fs-h2: 1.5rem; /* 24px */
+  --fs-h3: 1.25rem; /* 20px */
+  --fs-body: 1rem; /* 16px */
+  --fs-caption: 0.875rem; /* 14px */
+  /* Header specific tokens from Figma */
+  --fs-header: 24px;
+  --lh-header: 24px;
+  --ls-header: 0.4px;
+  --fw-header: 700;
+
+  /* Top Sellers heading */
+  --color-top-sellers: 59 59 59; /* #3B3B3B */
+  --fs-top-sellers: 36px;
+  --lh-top-sellers: 40px;
+  --ls-top-sellers: 0.4px;
+  --fw-top-sellers: 700;
+}
+
+/* Genre / All navigation */
+:root {
+  --color-genre-nav: 59 59 59; /* #3B3B3B */
+  --fs-genre-nav: 20px;
+  --lh-genre-nav: 24px;
+  --ls-genre-nav: 0.4px;
+  --fw-genre-nav: 700;
+}
+
+/* Card: GENRE label */
+:root {
+  --color-card-genre: 115 115 115; /* #737373 */
+  --fs-card-genre: 16px;
+  --lh-card-genre: 16px;
+  --ls-card-genre: 0px;
+  --fw-card-genre: 700;
+}
+
+/* Card: Product name */
+:root {
+  --color-card-product-name: 59 59 59; /* #3B3B3B */
+  --fs-card-product-name: 18px;
+  --lh-card-product-name: 20px;
+  --ls-card-product-name: 0.4px;
+  --fw-card-product-name: 700;
+}
+
+/* Button: ADD TO CART */
+:root {
+  --btn-cta-height: 56px;
+  --btn-cta-border-color: 59 59 59; /* #3B3B3B */
+  --btn-cta-border-width: 1px;
+  --btn-cta-radius: 8px;
+  --btn-cta-fs: 16px;
+  --btn-cta-lh: 16px;
+  --btn-cta-ls: 0.5px;
+  --btn-cta-fw: 700;
+  --btn-cta-fill: 88 86 96; /* #585660 */
+  --btn-cta-content: 255 255 255; /* #FFFFFF */
+  --btn-cta-hover-fill: 59 59 59; /* #3B3B3B - darker on hover */
+  --btn-cta-hover-scale: 1.02;
+  --btn-cta-hover-shadow: 0 4px 8px 0 rgb(0 0 0 / 0.12);
+}
+
+/* Footer & Logo */
+:root {
+  --footer-bg: 64 64 64; /* #404040 */
+  --footer-height: 172px;
+  --logo-width: 170px;
+  --logo-height: 44px;
+  --logo-color: 255 255 255; /* #FFFFFF */
+}
+
+/* Cart: Items counter */
+:root {
+  --cart-counter-fs: 24px;
+  --cart-counter-lh: 28px;
+  --cart-counter-ls: 0.4px;
+  --cart-counter-fw: 400;
+  --cart-counter-color: 59 59 59; /* #3B3B3B */
+}
+
+/* Cart: Back to Catalog link */
+:root {
+  --back-link-fs: 16px;
+  --back-link-lh: 16px;
+  --back-link-ls: 0px;
+  --back-link-fw: 500;
+  --back-link-color: 59 59 59; /* #3B3B3B */
+}
+
+/* Cart: Product description */
+:root {
+  --cart-desc-fs: 16px;
+  --cart-desc-lh: 20px;
+  --cart-desc-ls: 0px;
+  --cart-desc-fw: 400;
+  --cart-desc-color: 115 115 115; /* #737373 */
+}
+
+/* Cart: Remove button (X) */
+:root {
+  --remove-btn-size: 12px;
+  --remove-btn-color: 143 143 143; /* #8F8F8F */
+}
+
+/* Cart: Order Summary title */
+:root {
+  --order-summary-fs: 24px;
+  --order-summary-lh: 28px;
+  --order-summary-ls: 0.4px;
+  --order-summary-fw: 700;
+  --order-summary-color: 59 59 59; /* #3B3B3B */
+}
+
+/* Cart: Summary Product name */
+:root {
+  --summary-product-fs: 20px;
+  --summary-product-lh: 24px;
+  --summary-product-ls: 0.4px;
+  --summary-product-fw: 700;
+  --summary-product-color: 59 59 59; /* #3B3B3B */
+}
+
+/* Cart: Order Total */
+:root {
+  --order-total-fs: 20px;
+  --order-total-lh: 24px;
+  --order-total-ls: 0.4px;
+  --order-total-fw: 700;
+  --order-total-color: 59 59 59; /* #3B3B3B */
+}
+
+/* Cart: Summary Price */
+:root {
+  --summary-price-fs: 18px;
+  --summary-price-lh: 24px;
+  --summary-price-ls: 0.4px;
+  --summary-price-fw: 400;
+  --summary-price-color: 59 59 59; /* #3B3B3B */
+}
+
+/* Cart: Checkout button text */
+:root {
+  --checkout-text-fs: 16px;
+  --checkout-text-lh: 16px;
+  --checkout-text-ls: 0.5px;
+  --checkout-text-fw: 700;
+  --checkout-text-color: 255 255 255; /* #FFFFFF */
+}
+
+/* Cart: Checkout button dimensions */
+:root {
+  --checkout-btn-width: 522px;
+  --checkout-btn-height: 56px;
+  --checkout-btn-padding: 24px; /* Spacing/6 */
+  --checkout-btn-gap: 8px; /* Spacing/2 */
+  --checkout-btn-radius: 8px; /* Border Radius */
+  --checkout-btn-fill: 88 86 96; /* #585660 */
+  --checkout-btn-hover-fill: 59 59 59; /* #3B3B3B - darker on hover */
+  --checkout-btn-hover-scale: 1.02;
+  --checkout-btn-hover-shadow: 0 4px 12px 0 rgb(0 0 0 / 0.15);
+}
+
+/* Card: Price */
+:root {
+  --card-price-fs: 20px;
+  --card-price-lh: 24px;
+  --card-price-ls: 0.4px;
+  --card-price-fw: 700;
+  --card-price-color: 59 59 59; /* #3B3B3B */
+}
+
+/* Badge: New */
+:root {
+  --badge-new-width: 33px;
+  --badge-new-height: 16px;
+  --badge-new-fs: 16px;
+  --badge-new-lh: 16px;
+  --badge-new-ls: 0.4px;
+  --badge-new-fw: 400;
+  --badge-new-color: 59 59 59; /* #3B3B3B */
+}
+
+/* Button: SEE MORE */
+:root {
+  --see-more-width: 89px;
+  --see-more-height: 16px;
+  --see-more-fs: 16px;
+  --see-more-lh: 16px;
+  --see-more-ls: 0.5px;
+  --see-more-fw: 700;
+  --see-more-color: 255 255 255; /* #FFFFFF */
+  --see-more-hover-color: 229 231 235; /* #E5E7EB - lighter on hover */
+  --see-more-hover-scale: 1.05;
+  --see-more-hover-opacity: 0.8;
+}
+
+/* Component Spacing */
+:root {
+  /* Header spacing */
+  --header-padding-x: 24px; /* 1.5rem */
+  --header-padding-y: 16px; /* 1rem */
+  --header-gap: 16px; /* 1rem */
+  
+  /* Section spacing */
+  --section-padding-x: 24px; /* 1.5rem */
+  --section-padding-y: 32px; /* 2rem */
+  --section-gap: 24px; /* 1.5rem */
+  
+  /* Card spacing */
+  --card-padding: 16px; /* 1rem */
+  --card-gap: 12px; /* 0.75rem */
+  --card-margin: 16px; /* 1rem */
+  
+  /* Card hover states */
+  --card-hover-scale: 1.02;
+  --card-hover-shadow: 0 8px 16px 0 rgb(0 0 0 / 0.12);
+  --card-hover-transition: all 0.2s ease-in-out;
+  
+  /* Grid spacing */
+  --grid-gap: 24px; /* 1.5rem */
+  --grid-gap-sm: 16px; /* 1rem */
+  
+  /* Footer spacing */
+  --footer-padding: 24px; /* 1.5rem */
+  --footer-gap: 16px; /* 1rem */
+  
+  /* Cart spacing */
+  --cart-padding: 24px; /* 1.5rem */
+  --cart-gap: 16px; /* 1rem */
+  --cart-item-gap: 12px; /* 0.75rem */
+}
+
+/* Interactive States */
+:root {
+  /* Hover states */
+  --hover-opacity: 0.8;
+  --hover-scale: 1.02;
+  
+  /* Focus states */
+  --focus-ring: 0 0 0 2px rgb(59 130 246 / 0.5);
+  --focus-ring-offset: 2px;
+  
+  /* Active states */
+  --active-scale: 0.98;
+  
+  /* Disabled states */
+  --disabled-opacity: 0.5;
+  --disabled-cursor: not-allowed;
+}
+
+/* Loading Indicator */
+:root {
+  --loading-size: 24px;
+  --loading-color: 59 59 59; /* #3B3B3B */
+  --loading-speed: 1s;
+}
+
+/* Select/Dropdown */
+:root {
+  --select-padding: 8px 12px;
+  --select-border: 1px solid rgb(229 231 235);
+  --select-radius: 6px;
+  --select-bg: 255 255 255;
+  --select-text: 59 59 59; /* #3B3B3B */
+  --select-focus-border: 59 130 246; /* blue-500 */
+}
+
+/* Icons */
+:root {
+  --icon-size-sm: 16px;
+  --icon-size-md: 24px;
+  --icon-size-lg: 32px;
+  --icon-color: 59 59 59; /* #3B3B3B */
+  --icon-hover-color: 88 86 96; /* #585660 */
+}
+
+/* Error/Empty States */
+:root {
+  --error-color: 239 68 68; /* red-500 */
+  --error-bg: 254 242 242; /* red-50 */
+  --empty-color: 107 114 128; /* gray-500 */
+  --empty-bg: 249 250 251; /* gray-50 */
+}
+
+/* Responsive Breakpoints */
+:root {
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: 255 255 255;
+    --color-secondary: 209 213 219; /* gray-300 */
+    --color-accent: 96 165 250; /* blue-400 */
+    --color-success: 74 222 128; /* green-400 */
+    --color-warning: 251 191 36; /* amber-400 */
+    --color-error: 248 113 113; /* red-400 */
+
+    --color-bg: 17 24 39; /* slate-900 */
+    --color-surface: 31 41 55; /* slate-800 */
+    --color-border: 55 65 81; /* gray-700 */
+    --color-text: 243 244 246; /* gray-100 */
+    --color-muted: 156 163 175; /* gray-400 */
+  }
+}
