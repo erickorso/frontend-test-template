@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Archivo } from "next/font/google";
 import "./globals.css";
 import { ReduxProvider } from "../store/ReduxProvider";
+import { Header } from "../components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo" });
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} ${archivo.variable}`}>
         <ReduxProvider>
+          <Header />
           {children}
         </ReduxProvider>
       </body>
