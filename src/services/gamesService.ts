@@ -1,5 +1,8 @@
 import { Game } from '@/utils/endpoint'
 
+// Re-export Game interface for external use
+export type { Game }
+
 export interface GamesResponse {
   games: Game[]
   availableFilters: string[]
