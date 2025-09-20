@@ -34,7 +34,7 @@ describe('GamesService', () => {
 
       const result = await gamesService.getGames()
 
-      expect(fetch).toHaveBeenCalledWith('/api/games')
+      expect(fetch).toHaveBeenCalledWith('/api/games?page=1')
       expect(result).toEqual(mockResponse)
     })
 
@@ -51,10 +51,9 @@ describe('GamesService', () => {
         json: async () => mockResponse,
       })
 
-      const filters: GamesFilters = { genre: 'Action' }
-      await gamesService.getGames(filters)
+      await gamesService.getGames(1, 'Action')
 
-      expect(fetch).toHaveBeenCalledWith('/api/games?genre=Action')
+      expect(fetch).toHaveBeenCalledWith('/api/games?genre=Action&page=1')
     })
 
     it('fetches games with page filter', async () => {
@@ -70,8 +69,7 @@ describe('GamesService', () => {
         json: async () => mockResponse,
       })
 
-      const filters: GamesFilters = { page: 2 }
-      await gamesService.getGames(filters)
+      await gamesService.getGames(2)
 
       expect(fetch).toHaveBeenCalledWith('/api/games?page=2')
     })
@@ -89,8 +87,7 @@ describe('GamesService', () => {
         json: async () => mockResponse,
       })
 
-      const filters: GamesFilters = { genre: 'Action', page: 1 }
-      await gamesService.getGames(filters)
+      await gamesService.getGames(1, 'Action')
 
       expect(fetch).toHaveBeenCalledWith('/api/games?genre=Action&page=1')
     })

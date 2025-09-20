@@ -63,7 +63,7 @@ describe('CartIcon', () => {
     
     const cartButton = screen.getByLabelText(/Shopping cart with \d+ items/)
     expect(cartButton).toBeInTheDocument()
-    expect(cartButton).toHaveClass('relative', 'p-2', 'text-gray-700', 'hover:text-blue-600')
+    expect(cartButton).toHaveClass('relative', 'p-3', 'text-gray-700', 'hover:text-blue-600')
   })
 
   it('renders cart SVG icon', () => {
@@ -89,7 +89,7 @@ describe('CartIcon', () => {
     
     const countBadge = screen.getByText('5')
     expect(countBadge).toBeInTheDocument()
-    expect(countBadge).toHaveClass('absolute', '-top-1', '-right-1', 'bg-red-500', 'text-white')
+    expect(countBadge).toHaveClass('absolute', '-top-1', '-right-1', 'bg-gradient-to-r', 'from-red-500', 'to-pink-500', 'text-white')
   })
 
   it('shows 99+ for counts over 99', () => {

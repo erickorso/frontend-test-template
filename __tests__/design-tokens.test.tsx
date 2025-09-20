@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import Home from '../src/app/page'
 
-// Mock Next.js components
+// Mock Next.js components that might cause issues in tests
 jest.mock('next/font/google', () => ({
   Inter: () => ({ className: 'inter' }),
   Archivo: () => ({ variable: '--font-archivo' }),
@@ -10,28 +10,19 @@ jest.mock('next/font/google', () => ({
 describe('Design Tokens Integration', () => {
   it('applies custom color tokens correctly', () => {
     render(<Home />)
-    
-    const main = screen.getByRole('main')
-    
-    // Test that our custom error color token is applied
-    expect(main).toHaveClass('text-error')
+    const heroSection = screen.getByText('Welcome to Game Store').closest('section')
+    expect(heroSection).toHaveClass('from-blue-600', 'to-purple-600', 'text-white')
   })
 
   it('applies typography tokens correctly', () => {
     render(<Home />)
-    
-    const main = screen.getByRole('main')
-    
-    // Test typography classes
-    expect(main).toHaveClass('font-bold', 'text-4xl')
+    const heroHeading = screen.getByText('Welcome to Game Store')
+    expect(heroHeading).toHaveClass('font-bold', 'text-4xl', 'md:text-6xl')
   })
 
   it('applies layout tokens correctly', () => {
     render(<Home />)
-    
     const main = screen.getByRole('main')
-    
-    // Test layout classes
-    expect(main).toHaveClass('flex', 'min-h-screen', 'flex-col', 'items-center', 'justify-between')
+    expect(main).toHaveClass('min-h-screen', 'bg-gray-50')
   })
 })

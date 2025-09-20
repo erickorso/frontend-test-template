@@ -25,18 +25,16 @@ class GamesService {
   /**
    * Fetches games from the API with optional filters
    */
-  async getGames(filters: GamesFilters = {}): Promise<GamesResponse> {
+  async getGames(page: number = 1, genre?: string): Promise<GamesResponse> {
     const searchParams = new URLSearchParams()
     
-    if (filters.genre) {
-      searchParams.append('genre', filters.genre)
+    if (genre) {
+      searchParams.append('genre', genre)
     }
     
-    if (filters.page) {
-      searchParams.append('page', filters.page.toString())
-    }
+    searchParams.append('page', page.toString())
 
-    const url = `${this.baseUrl}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
+    const url = `${this.baseUrl}?${searchParams.toString()}`
     
     try {
       const response = await fetch(url)
@@ -51,6 +49,13 @@ class GamesService {
       console.error('Error fetching games:', error)
       throw new Error('Failed to fetch games')
     }
+  }
+
+  /**
+   * Fetches games from the API with optional filters (legacy method)
+   */
+  async getGamesWithFilters(filters: GamesFilters = {}): Promise<GamesResponse> {
+    return this.getGames(filters.page || 1, filters.genre)
   }
 
   /**

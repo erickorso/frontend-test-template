@@ -1,9 +1,11 @@
+import { Container } from '../components/Container'
+
 export default function Home() {
   return (
     <main className='min-h-screen bg-gray-50'>
       {/* Hero Section */}
       <section className='bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
+        <Container className="text-center">
           <h1 className='text-4xl md:text-6xl font-bold mb-6'>
             Welcome to Game Store
           </h1>
@@ -13,12 +15,12 @@ export default function Home() {
           <button className='bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors duration-200'>
             Browse Games
           </button>
-        </div>
+        </Container>
       </section>
 
       {/* Features Section */}
       <section className='py-16 bg-white'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <Container>
           <h2 className='text-3xl font-bold text-center mb-12 text-gray-900'>
             Why Choose Our Store?
           </h2>
@@ -51,12 +53,12 @@ export default function Home() {
               <p className='text-gray-600'>Competitive pricing with regular discounts and deals</p>
             </div>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* CTA Section */}
       <section className='bg-gray-900 text-white py-16'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
+        <Container className="text-center">
           <h2 className='text-3xl font-bold mb-4'>Ready to Start Gaming?</h2>
           <p className='text-xl text-gray-300 mb-8'>Join thousands of gamers who trust our platform</p>
           <div className='flex flex-col sm:flex-row gap-4 justify-center'>
@@ -67,7 +69,7 @@ export default function Home() {
               Learn More
             </button>
           </div>
-        </div>
+        </Container>
       </section>
     </main>
   )
