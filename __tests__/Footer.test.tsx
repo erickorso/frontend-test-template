@@ -55,8 +55,12 @@ describe('Footer', () => {
     expect(container).toHaveClass('w-full', 'mx-auto', 'px-4', 'sm:px-6', 'lg:px-8', 'max-w-[1280px]', 'py-4')
   })
 
-  it('renders company logo', () => {
+  it('renders company logo as a link to home', () => {
     renderWithProvider(<Footer />)
+    
+    const logoLink = screen.getByRole('link')
+    expect(logoLink).toBeInTheDocument()
+    expect(logoLink).toHaveAttribute('href', '/')
     
     const logo = screen.getByAltText('A APPLY DIGITAL')
     expect(logo).toBeInTheDocument()
@@ -67,7 +71,7 @@ describe('Footer', () => {
   it('has centered logo layout', () => {
     renderWithProvider(<Footer />)
     
-    const logoContainer = screen.getByAltText('A APPLY DIGITAL').parentElement
+    const logoContainer = screen.getByAltText('A APPLY DIGITAL').parentElement?.parentElement
     expect(logoContainer).toHaveClass('flex', 'justify-center', 'items-center')
   })
 
