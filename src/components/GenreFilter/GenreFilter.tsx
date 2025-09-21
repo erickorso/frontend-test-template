@@ -13,40 +13,33 @@ const GenreFilter: React.FC = memo(() => {
     const selectedGenre = e.target.value
     const params = new URLSearchParams(searchParams.toString())
     
-    if (selectedGenre === '') {
-      // Remove genre parameter for "All" option
-      params.delete('genre')
-    } else {
-      // Set the selected genre
+    if (selectedGenre) {
       params.set('genre', selectedGenre)
+    } else {
+      params.delete('genre')
     }
     
     // Reset to page 1 when changing genre
     params.delete('page')
     
-    // Navigate to catalog with new parameters
-    const queryString = params.toString()
-    const newUrl = queryString ? `/catalog?${queryString}` : '/catalog'
-    router.push(newUrl)
+    router.push(`/catalog?${params.toString()}`)
   }, [router, searchParams])
 
   return (
     <div className="flex items-center space-x-2">
-      <label htmlFor="genre-filter" className="text-sm text-gray-600">
+      <label htmlFor="genre-filter" className="text-sm font-medium text-gray-700">
         Genre:
       </label>
-      <span className="text-gray-300">|</span>
       <select
         id="genre-filter"
         value={currentGenre}
         onChange={handleGenreChange}
-        className="block px-3 py-2 bg-transparent focus:outline-none sm:text-sm text-gray-700 hover:text-blue-600 transition-colors duration-200"
-        aria-label="Filter games by genre"
+        className="block w-40 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
       >
-        <option value="">All</option>
-        {availableFilters.map((genre) => (
-          <option key={genre} value={genre}>
-            {genre}
+        <option value="">All Genres</option>
+        {availableFilters.map((filter) => (
+          <option key={filter} value={filter}>
+            {filter}
           </option>
         ))}
       </select>

@@ -3,13 +3,12 @@
 import React, { memo, useEffect, useState } from 'react'
 
 export const dynamic = 'force-dynamic'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Container } from '../../components/Container'
 import { Game } from '../../utils/endpoint'
-import { GamesResponse } from '../../services/gamesService'
-import { gamesService } from '../../services/gamesService'
 import { cartService } from '../../services/cartService'
+import { gamesService, GamesResponse } from '../../services/gamesService'
 
 const CatalogPage: React.FC = memo(() => {
   const [games, setGames] = useState<Game[]>([])
@@ -18,10 +17,12 @@ const CatalogPage: React.FC = memo(() => {
   const [currentPage, setCurrentPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
   const [cartItems, setCartItems] = useState<string[]>([])
+  const [isFilterLoading, setIsFilterLoading] = useState(false)
   
   const searchParams = useSearchParams()
+  const router = useRouter()
   const genre = searchParams.get('genre') || ''
-  const searchQuery = searchParams.get('search') || ''
+  const search = searchParams.get('search') || ''
   const page = parseInt(searchParams.get('page') || '1')
 
   // Load cart items on component mount
@@ -36,6 +37,36 @@ const CatalogPage: React.FC = memo(() => {
     }
     loadCartItems()
   }, [])
+
+  // Load games when URL params change
+  useEffect(() => {
+    const loadGames = async () => {
+      try {
+        setIsLoading(true)
+        setIsFilterLoading(true)
+        setError(null)
+        
+        let data: GamesResponse
+        if (search && search.trim()) {
+          data = await gamesService.searchGames(search, { page, genre })
+        } else {
+          data = await gamesService.getGames(page, genre)
+        }
+        
+        setGames(data.games)
+        setCurrentPage(data.currentPage)
+        setHasMore(data.currentPage < data.totalPages)
+      } catch (err) {
+        setError('Failed to load games. Please try again.')
+        console.error('Error loading games:', err)
+      } finally {
+        setIsLoading(false)
+        setIsFilterLoading(false)
+      }
+    }
+
+    loadGames()
+  }, [genre, page, search])
 
   const handleAddToCart = (game: Game) => {
     try {
@@ -57,31 +88,6 @@ const CatalogPage: React.FC = memo(() => {
 
   const isInCart = (gameId: string) => cartItems.includes(gameId)
 
-  const loadGames = async (pageNum: number = 1, genreFilter: string = '', searchTerm: string = '') => {
-    try {
-      setIsLoading(true)
-      setError(null)
-      
-      let data: GamesResponse
-      if (searchTerm.trim()) {
-        // Use search service when there's a search query
-        data = await gamesService.searchGames(searchTerm, { page: pageNum, genre: genreFilter })
-      } else {
-        // Use regular games service when no search
-        data = await gamesService.getGames(pageNum, genreFilter)
-      }
-      
-      setGames(data.games)
-      setCurrentPage(data.currentPage)
-      setHasMore(data.currentPage < data.totalPages)
-    } catch (err) {
-      setError('Failed to load games. Please try again.')
-      console.error('Error loading games:', err)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   const loadMoreGames = async () => {
     if (isLoading || !hasMore) return
     
@@ -89,8 +95,8 @@ const CatalogPage: React.FC = memo(() => {
       setIsLoading(true)
       const nextPage = currentPage + 1
       let data: GamesResponse
-      if (searchQuery.trim()) {
-        data = await gamesService.searchGames(searchQuery, { page: nextPage, genre })
+      if (search && search.trim()) {
+        data = await gamesService.searchGames(search, { page: nextPage, genre })
       } else {
         data = await gamesService.getGames(nextPage, genre)
       }
@@ -106,112 +112,164 @@ const CatalogPage: React.FC = memo(() => {
     }
   }
 
-  useEffect(() => {
-    loadGames(page, genre, searchQuery)
-  }, [page, genre, searchQuery])
+  // Function to remove search filter
+  const removeSearchFilter = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete('search')
+    router.push(`/catalog?${params.toString()}`)
+  }
+
+  // Function to remove genre filter
+  const removeGenreFilter = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete('genre')
+    router.push(`/catalog?${params.toString()}`)
+  }
 
   return (
     <main className="min-h-screen bg-gray-50">
       <Container className="py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Game Catalog</h1>
-          
-          {/* Search and filter indicators */}
-          {(searchQuery || genre) && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {searchQuery && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                  Search: &quot;{searchQuery}&quot;
-                </span>
-              )}
-              {genre && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                  Genre: {genre}
-                </span>
-              )}
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">Game Catalog</h1>
+
+        {/* Search and filter indicators with remove buttons */}
+        {(search || genre) && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {search && (
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                Search: &quot;{search}&quot;
+                <button
+                  onClick={removeSearchFilter}
+                  className="ml-2 text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                  aria-label="Remove search filter"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            )}
+            {genre && (
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                Genre: {genre}
+                <button
+                  onClick={removeGenreFilter}
+                  className="ml-2 text-green-600 hover:text-green-800 transition-colors duration-200"
+                  aria-label="Remove genre filter"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Game Grid Container with Loading Overlay */}
+        <div className="relative">
+          {/* Loading state overlay - shows when filtering */}
+          {isFilterLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 z-20 rounded-lg min-h-[400px]">
+              <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+                <p className="text-xl text-gray-700 mt-6 font-semibold">Loading games...</p>
+              </div>
             </div>
           )}
-        </div>
 
-        {/* Loading indicator */}
-        {isLoading && games.length === 0 && (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          </div>
-        )}
-
-        {/* Error state */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
-            <p className="text-red-800">{error}</p>
-          </div>
-        )}
-
-        {/* Games grid */}
-        {games.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-            {games.map((game) => (
-              <div key={game.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200">
-                <div className="relative">
-                  <Image
-                    src={game.image}
-                    alt={game.name}
-                    width={400}
-                    height={192}
-                    className="w-full h-48 object-cover"
-                  />
-                  {game.isNew && (
-                    <span className="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
-                      New
-                    </span>
-                  )}
-                </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{game.name}</h3>
-                  <p className="text-sm text-gray-600 mb-2">{game.genre}</p>
-                  <p className="text-sm text-gray-700 mb-3 line-clamp-2">{game.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xl font-bold text-blue-600">${game.price}</span>
+          {/* Game Grid */}
+          {games.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+              {games.map((game) => (
+                <div key={game.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-200 border border-gray-200 group">
+                  <div className="relative p-3">
+                    <Image
+                      src={game.image}
+                      alt={game.name}
+                      width={400}
+                      height={192}
+                      className="w-full h-48 object-cover rounded-t"
+                    />
+                    {game.isNew && (
+                      <span className="absolute top-4 left-4 bg-white text-gray-800 text-xs font-bold px-2 py-1 rounded border border-gray-200">
+                        New
+                      </span>
+                    )}
+                    {/* Description overlay - only visible on desktop hover */}
+                    <div className="absolute inset-0 bg-[#404040] bg-opacity-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden md:flex items-center justify-center p-4">
+                      <p className="text-white text-base text-center leading-relaxed">{game.description}</p>
+                    </div>
+                  </div>
+                  <div className="p-3">
+                    <p className="text-xs text-gray-500 uppercase mb-1">Genre: {game.genre}</p>
+                    <div className="flex justify-between items-center mb-3">
+                      <h3 className="text-lg font-semibold text-gray-900 truncate pr-2">{game.name}</h3>
+                      <span className="text-xl font-bold text-gray-900 flex-shrink-0">${game.price.toFixed(2)}</span>
+                    </div>
                     {isInCart(game.id) ? (
                       <button 
                         onClick={() => handleRemoveFromCart(game.id)}
-                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors duration-200"
+                        className="w-full border border-red-600 text-red-600 rounded text-sm font-semibold hover:bg-red-50 transition-colors duration-200 uppercase"
+                        style={{ 
+                          height: '56px',
+                          borderRadius: '4px',
+                          padding: '0 16px'
+                        }}
                       >
                         Remove
                       </button>
                     ) : (
                       <button 
                         onClick={() => handleAddToCart(game)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-200"
+                        className="w-full border border-gray-800 text-gray-800 rounded text-sm font-semibold hover:bg-gray-50 transition-colors duration-200 uppercase"
+                        style={{ 
+                          height: '56px',
+                          borderRadius: '4px',
+                          padding: '0 16px'
+                        }}
                       >
                         Add to Cart
                       </button>
                     )}
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+
+          {/* Error state */}
+          {error && (
+            <div className="text-center py-12">
+              <p className="text-lg text-red-600">{error}</p>
+            </div>
+          )}
+
+          {/* No games found */}
+          {!isLoading && games.length === 0 && !error && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">
+                {genre ? `No games found for the selected genre: ${genre}` : 'No games found'}
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* See more button */}
         {hasMore && (
-          <div className="text-center">
+          <div className="text-left">
             <button
               onClick={loadMoreGames}
               disabled={isLoading}
-              className="bg-gray-800 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-[#585660] text-white font-semibold hover:bg-[#4a4a52] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed uppercase"
+              style={{
+                width: '137px',
+                height: '56px',
+                padding: '12px 24px',
+                borderRadius: '8px'
+              }}
             >
               {isLoading ? 'Loading...' : 'See More'}
             </button>
-          </div>
-        )}
-
-        {/* No games found */}
-        {!isLoading && games.length === 0 && !error && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No games found for the selected genre.</p>
           </div>
         )}
       </Container>

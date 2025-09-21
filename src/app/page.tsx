@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Container } from '../components/Container'
 
 export const dynamic = 'force-dynamic'
@@ -14,9 +15,9 @@ export default function Home() {
           <p className='text-xl md:text-2xl mb-8 text-blue-100'>
             Discover amazing games and build your collection
           </p>
-          <button className='bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors duration-200'>
+          <Link href="/catalog" className='bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors duration-200 inline-block'>
             Browse Games
-          </button>
+          </Link>
         </Container>
       </section>
 
@@ -54,22 +55,6 @@ export default function Home() {
               <h3 className='text-xl font-semibold mb-2 text-gray-900'>Best Prices</h3>
               <p className='text-gray-600'>Competitive pricing with regular discounts and deals</p>
             </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* CTA Section */}
-      <section className='bg-gray-900 text-white py-16'>
-        <Container className="text-center">
-          <h2 className='text-3xl font-bold mb-4'>Ready to Start Gaming?</h2>
-          <p className='text-xl text-gray-300 mb-8'>Join thousands of gamers who trust our platform</p>
-          <div className='flex flex-col sm:flex-row gap-4 justify-center'>
-            <button className='bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors duration-200'>
-              View All Games
-            </button>
-            <button className='border border-white text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-white hover:text-gray-900 transition-colors duration-200'>
-              Learn More
-            </button>
           </div>
         </Container>
       </section>
