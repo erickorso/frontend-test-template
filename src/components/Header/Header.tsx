@@ -71,12 +71,12 @@ const Header: React.FC = memo(() => {
 
       {/* Second Row: Title, Search and Filters - Always visible */}
       <div className={`bg-gray-100 transition-all duration-500 ease-in-out ${
-        isScrolled ? 'py-2 shadow-md -translate-y-16' : 'py-4 shadow-md translate-y-0'
+        isScrolled ? 'py-1 shadow-md -translate-y-16' : 'py-4 shadow-md translate-y-0'
       }`}>
         <Container>
           {/* Title - Hidden on scroll */}
           <div className={`transition-all duration-500 ease-in-out ${
-            isScrolled ? 'opacity-0 -translate-y-2 pointer-events-none' : 'opacity-100 translate-y-0'
+            isScrolled ? 'opacity-0 -translate-y-2 pointer-events-none h-0 overflow-hidden' : 'opacity-100 translate-y-0 h-16'
           }`}>
             <h1 className="text-3xl font-extrabold text-gray-900 mb-4">
               Top Sellers
