@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Container } from '../../components/Container'
+import { GameCardSkeleton } from '../../components/Skeleton'
 import { Game } from '../../utils/endpoint'
 import { cartService } from '../../services/cartService'
 import { gamesService, GamesResponse } from '../../services/gamesService'
@@ -46,12 +47,17 @@ const CatalogPage: React.FC = memo(() => {
         setIsFilterLoading(true)
         setError(null)
         
-        let data: GamesResponse
-        if (search && search.trim()) {
-          data = await gamesService.searchGames(search, { page, genre })
-        } else {
-          data = await gamesService.getGames(page, genre)
-        }
+        // Add minimum delay to show skeleton
+        const [data] = await Promise.all([
+          (async () => {
+            if (search && search.trim()) {
+              return await gamesService.searchGames(search, { page, genre })
+            } else {
+              return await gamesService.getGames(page, genre)
+            }
+          })(),
+          new Promise(resolve => setTimeout(resolve, 1000)) // Minimum 1 second delay
+        ])
         
         setGames(data.games)
         setCurrentPage(data.currentPage)
@@ -169,7 +175,7 @@ const CatalogPage: React.FC = memo(() => {
         <div className="relative">
           {/* Loading state overlay - shows when filtering */}
           {isFilterLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-90 z-20 rounded-lg min-h-[400px]">
+            <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-30 z-20 rounded-lg min-h-[400px]">
               <div className="text-center">
                 <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
                 <p className="text-xl text-gray-700 mt-6 font-semibold">Loading games...</p>
@@ -177,9 +183,18 @@ const CatalogPage: React.FC = memo(() => {
             </div>
           )}
 
+          {/* Skeleton loading for initial load */}
+          {isLoading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8 animate-fadeIn">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <GameCardSkeleton key={index} />
+              ))}
+            </div>
+          )}
+
           {/* Game Grid */}
-          {games.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+          {!isLoading && games.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8 animate-fadeIn">
               {games.map((game) => (
                 <div key={game.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-200 border border-gray-200 group">
                   <div className="relative p-3">

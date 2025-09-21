@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Container } from '../../components/Container'
+import { CartItemSkeleton, OrderSummarySkeleton } from '../../components/Skeleton'
 import { CartItem } from '../../services/cartService'
 import { cartService } from '../../services/cartService'
 import { Game } from '../../utils/endpoint'
@@ -20,11 +21,24 @@ const CartPage: React.FC<CartPageProps> = memo(() => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const loadCart = () => {
+    const loadCart = async () => {
       try {
         setIsLoading(true)
-        const items = cartService.getCartItems()
-        const summary = cartService.getCartSummary()
+        
+        // Add minimum delay to show skeleton
+        const [items, summary] = await Promise.all([
+          new Promise<CartItem[]>(resolve => {
+            setTimeout(() => {
+              resolve(cartService.getCartItems())
+            }, 1000)
+          }),
+          new Promise<{totalItems: number, totalPrice: number}>(resolve => {
+            setTimeout(() => {
+              resolve(cartService.getCartSummary())
+            }, 1000)
+          })
+        ])
+        
         setCartItems(items)
         setTotalItems(summary.totalItems)
         setTotalPrice(summary.totalPrice)
@@ -67,8 +81,30 @@ const CartPage: React.FC<CartPageProps> = memo(() => {
   if (isLoading) {
     return (
       <main className="min-h-screen bg-gray-50">
-        <Container className="py-8 text-center">
-          <p className="text-lg text-gray-600">Loading cart...</p>
+        <Container className="py-8">
+          <div className="max-w-7xl mx-auto">
+            {/* Header Section */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Shopping Cart</h1>
+              <div className="h-4 bg-gray-300 rounded w-32 animate-pulse"></div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-12">
+              {/* Cart Items Skeleton - Left Column */}
+              <div className="lg:col-span-2">
+                <div className="divide-y divide-gray-200">
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <CartItemSkeleton key={index} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Order Summary Skeleton - Right Column */}
+              <div className="lg:col-span-1">
+                <OrderSummarySkeleton />
+              </div>
+            </div>
+          </div>
         </Container>
       </main>
     )
@@ -135,9 +171,9 @@ const CartPage: React.FC<CartPageProps> = memo(() => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-12">
             {/* Cart Items - Left Column */}
             <div className="lg:col-span-2">
-              <div className="divide-y divide-gray-200">
-                {cartItems.map((item, index) => (
-                  <div key={item.id} className="p-6 relative">
+                <div className="divide-y divide-gray-200">
+                  {cartItems.map((item, index) => (
+                    <div key={item.id} className="p-6 relative animate-fadeIn" style={{ animationDelay: `${index * 0.1}s` }}>
                     {/* Remove Button - Top Right Corner */}
                     <button
                       aria-label={`Remove ${item.name} from cart`}
@@ -199,7 +235,7 @@ const CartPage: React.FC<CartPageProps> = memo(() => {
 
             {/* Order Summary - Right Column */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-8">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-8 animate-slideIn">
                 <div className="px-6 py-4 border-b border-gray-200">
                   <h2 className="text-xl font-semibold text-gray-900">Order Summary</h2>
                 </div>
