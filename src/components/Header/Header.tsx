@@ -26,7 +26,7 @@ const Header: React.FC = memo(() => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY
-      setIsScrolled(scrollY > 100)
+      setIsScrolled(scrollY > 0)
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -55,10 +55,14 @@ const Header: React.FC = memo(() => {
   return (
     <header className="sticky top-0 z-40 w-full">
       {/* First Row: Logo and Cart Icon - Hidden on scroll */}
-      <div className={`bg-white transition-all duration-500 ease-in-out ${
-        isScrolled ? 'opacity-0 -translate-y-full pointer-events-none' : 'opacity-100 translate-y-0 shadow-sm'
-      }`}>
-        <Container className="flex justify-between items-center h-16">
+      <div className={`bg-white relative z-10 ${
+        isScrolled ? 'h-0 overflow-hidden' : 'h-16'
+      }`} style={{
+        transition: isScrolled ? 'none' : 'height 0.5s ease-in-out 1s'
+      }}>
+        <Container className={`flex justify-between items-center h-16 transition-opacity duration-100 ${
+          isScrolled ? 'opacity-0' : 'opacity-100'
+        }`}>
           {/* GamerShop Logo */}
           <Link href="/" className="text-gray-800 text-2xl font-bold hover:text-blue-600 transition-colors duration-200">
             GamerShop
@@ -70,13 +74,13 @@ const Header: React.FC = memo(() => {
       </div>
 
       {/* Second Row: Title, Search and Filters - Always visible */}
-      <div className={`bg-gray-100 transition-all duration-500 ease-in-out ${
-        isScrolled ? 'py-1 shadow-md -translate-y-16' : 'py-4 shadow-md translate-y-0'
+      <div className={`bg-gray-100 transition-all duration-500 ease-in-out relative z-20 ${
+        isScrolled ? 'py-1 shadow-md' : 'py-4 shadow-md'
       }`}>
         <Container>
           {/* Title - Hidden on scroll */}
           <div className={`transition-all duration-500 ease-in-out ${
-            isScrolled ? 'opacity-0 -translate-y-2 pointer-events-none h-0 overflow-hidden' : 'opacity-100 translate-y-0 h-16'
+            isScrolled ? 'opacity-0 pointer-events-none h-0 overflow-hidden' : 'opacity-100 h-16'
           }`}>
             <h1 className="text-3xl font-extrabold text-gray-900 mb-4">
               Top Sellers

@@ -1,12 +1,14 @@
 'use client'
 
 import React, { memo, useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export const dynamic = 'force-dynamic'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Container } from '../../components/Container'
 import { CartItemSkeleton, OrderSummarySkeleton } from '../../components/Skeleton'
+import { PageTransition } from '../../components/PageTransition'
 import { CartItem } from '../../services/cartService'
 import { cartService } from '../../services/cartService'
 import { Game } from '../../utils/endpoint'
@@ -159,8 +161,9 @@ const CartPage: React.FC<CartPageProps> = memo(() => {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <Container className="py-8">
+    <PageTransition>
+      <main className="min-h-screen bg-gray-50">
+        <Container className="py-8">
         <div className="max-w-7xl mx-auto">
           {/* Header Section */}
           <div className="mb-8">
@@ -172,10 +175,26 @@ const CartPage: React.FC<CartPageProps> = memo(() => {
             {/* Cart Items - Left Column */}
             <div className="lg:col-span-2">
                 <div className="divide-y divide-gray-200">
-                  {cartItems.map((item, index) => (
-                    <div key={item.id} className="p-6 relative animate-fadeIn" style={{ animationDelay: `${index * 0.1}s` }}>
+                  <AnimatePresence mode="popLayout">
+                    {cartItems.map((item, index) => (
+                      <motion.div
+                        key={item.id}
+                        layout
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: -100, scale: 0.8 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 300,
+                          damping: 30,
+                          delay: index * 0.1
+                        }}
+                        className="p-6 relative"
+                      >
                     {/* Remove Button - Top Right Corner */}
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.1, rotate: 90 }}
+                      whileTap={{ scale: 0.9 }}
                       aria-label={`Remove ${item.name} from cart`}
                       onClick={() => handleRemoveItem(item.id)}
                       className="absolute top-4 right-4 p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all duration-200"
@@ -193,7 +212,7 @@ const CartPage: React.FC<CartPageProps> = memo(() => {
                           d="M6 18L18 6M6 6l12 12"
                         />
                       </svg>
-                    </button>
+                    </motion.button>
 
                     <div className="flex items-start space-x-4 pr-8">
                       {/* Game Image */}
@@ -226,16 +245,22 @@ const CartPage: React.FC<CartPageProps> = memo(() => {
                         {/* Description */}
                         <p className="text-sm text-gray-600 mb-2">{item.description}</p>
                         
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
             </div>
 
             {/* Order Summary - Right Column */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-8 animate-slideIn">
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30, delay: 0.2 }}
+                className="bg-white rounded-lg shadow-sm border border-gray-200 sticky top-8"
+              >
                 <div className="px-6 py-4 border-b border-gray-200">
                   <h2 className="text-xl font-semibold text-gray-900">Order Summary</h2>
                 </div>
@@ -264,17 +289,23 @@ const CartPage: React.FC<CartPageProps> = memo(() => {
                   </div>
                   
                   <div className="mt-6">
-                    <button className="w-full bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-900 transition-colors duration-200 uppercase" style={{ height: '56px', padding: '0 16px' }}>
+                    <motion.button
+                      whileHover={{ scale: 1.02, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="w-full bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-900 transition-colors duration-200 uppercase"
+                      style={{ height: '56px', padding: '0 16px' }}
+                    >
                       Checkout
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
-      </Container>
-    </main>
+        </Container>
+      </main>
+    </PageTransition>
   )
 })
 

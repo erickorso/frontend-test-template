@@ -1,12 +1,14 @@
 'use client'
 
 import React, { memo, useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 
 export const dynamic = 'force-dynamic'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Container } from '../../components/Container'
 import { GameCardSkeleton } from '../../components/Skeleton'
+import { PageTransition } from '../../components/PageTransition'
 import { Game } from '../../utils/endpoint'
 import { cartService } from '../../services/cartService'
 import { gamesService, GamesResponse } from '../../services/gamesService'
@@ -133,8 +135,9 @@ const CatalogPage: React.FC = memo(() => {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <Container className="py-8">
+    <PageTransition>
+      <main className="min-h-screen bg-gray-50">
+        <Container className="py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Game Catalog</h1>
 
         {/* Search and filter indicators with remove buttons */}
@@ -194,9 +197,25 @@ const CatalogPage: React.FC = memo(() => {
 
           {/* Game Grid */}
           {!isLoading && games.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8 animate-fadeIn">
-              {games.map((game) => (
-                <div key={game.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-200 border border-gray-200 group">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+              {games.map((game, index) => (
+                <motion.div
+                  key={game.id}
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 30,
+                    delay: index * 0.1
+                  }}
+                  whileHover={{ 
+                    y: -8, 
+                    scale: 1.02,
+                    transition: { type: "spring", stiffness: 400, damping: 25 }
+                  }}
+                  className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-xl transition-shadow duration-300 border border-gray-200 group"
+                >
                   <div className="relative p-3">
                     <Image
                       src={game.image}
@@ -222,7 +241,9 @@ const CatalogPage: React.FC = memo(() => {
                       <span className="text-xl font-bold text-gray-900 flex-shrink-0">${game.price.toFixed(2)}</span>
                     </div>
                     {isInCart(game.id) ? (
-                      <button 
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => handleRemoveFromCart(game.id)}
                         className="w-full border border-red-600 text-red-600 rounded text-sm font-semibold hover:bg-red-50 transition-colors duration-200 uppercase"
                         style={{ 
@@ -232,9 +253,11 @@ const CatalogPage: React.FC = memo(() => {
                         }}
                       >
                         Remove
-                      </button>
+                      </motion.button>
                     ) : (
-                      <button 
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => handleAddToCart(game)}
                         className="w-full border border-gray-800 text-gray-800 rounded text-sm font-semibold hover:bg-gray-50 transition-colors duration-200 uppercase"
                         style={{ 
@@ -244,10 +267,10 @@ const CatalogPage: React.FC = memo(() => {
                         }}
                       >
                         Add to Cart
-                      </button>
+                      </motion.button>
                     )}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
@@ -272,7 +295,9 @@ const CatalogPage: React.FC = memo(() => {
         {/* See more button */}
         {hasMore && (
           <div className="text-left">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
               onClick={loadMoreGames}
               disabled={isLoading}
               className="bg-[#585660] text-white font-semibold hover:bg-[#4a4a52] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed uppercase"
@@ -284,11 +309,12 @@ const CatalogPage: React.FC = memo(() => {
               }}
             >
               {isLoading ? 'Loading...' : 'See More'}
-            </button>
+            </motion.button>
           </div>
         )}
-      </Container>
-    </main>
+        </Container>
+      </main>
+    </PageTransition>
   )
 })
 
