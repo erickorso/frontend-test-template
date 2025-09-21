@@ -25,18 +25,16 @@ class GamesService {
   /**
    * Fetches games from the API with optional filters
    */
-  async getGames(filters: GamesFilters = {}): Promise<GamesResponse> {
+  async getGames(page: number = 1, genre?: string): Promise<GamesResponse> {
     const searchParams = new URLSearchParams()
     
-    if (filters.genre) {
-      searchParams.append('genre', filters.genre)
+    if (genre) {
+      searchParams.append('genre', genre)
     }
     
-    if (filters.page) {
-      searchParams.append('page', filters.page.toString())
-    }
+    searchParams.append('page', page.toString())
 
-    const url = `${this.baseUrl}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
+    const url = `${this.baseUrl}?${searchParams.toString()}`
     
     try {
       const response = await fetch(url)
@@ -54,6 +52,13 @@ class GamesService {
   }
 
   /**
+   * Fetches games from the API with optional filters (legacy method)
+   */
+  async getGamesWithFilters(filters: GamesFilters = {}): Promise<GamesResponse> {
+    return this.getGames(filters.page || 1, filters.genre)
+  }
+
+  /**
    * Gets available genre filters
    */
   async getAvailableFilters(): Promise<string[]> {
@@ -65,7 +70,7 @@ class GamesService {
    * Searches games by name
    */
   async searchGames(query: string, filters: GamesFilters = {}): Promise<GamesResponse> {
-    const response = await this.getGames(filters)
+    const response = await this.getGames(filters.page || 1, filters.genre)
     
     if (!query.trim()) {
       return response
