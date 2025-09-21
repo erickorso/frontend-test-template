@@ -1,10 +1,9 @@
-import { all, fork } from 'redux-saga/effects'
+// Simplified sagas index for Vercel compatibility
 import { watchGamesSagas } from './gamesSagas'
 import { watchCartSagas } from './cartSagas'
 
+// Root saga - simplified for compatibility
 export function* rootSaga() {
-  yield all([
-    fork(watchGamesSagas),
-    fork(watchCartSagas),
-  ])
+  yield watchGamesSagas()
+  yield watchCartSagas()
 }
