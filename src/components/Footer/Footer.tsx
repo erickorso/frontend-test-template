@@ -7,16 +7,16 @@ import { Container } from '../Container'
 
 const Footer: React.FC = memo(() => {
   return (
-    <footer className="bg-gray-800 text-white">
-      <Container className="py-4">
-        <div className="flex justify-center items-center">
+    <footer className="bg-gray-800 text-white h-44">
+      <Container className="h-full">
+        <div className="flex justify-center items-center h-full">
           <Link href="/" className="hover:opacity-80 transition-opacity duration-200">
             <Image 
               src="/logo_white.svg" 
               alt="A APPLY DIGITAL" 
               width={170}
               height={45}
-              className="h-8 w-auto"
+              className="h-12 w-auto"
             />
           </Link>
         </div>

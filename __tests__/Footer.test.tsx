@@ -44,7 +44,7 @@ describe('Footer', () => {
     
     const footer = screen.getByRole('contentinfo')
     expect(footer).toBeInTheDocument()
-    expect(footer).toHaveClass('bg-gray-800', 'text-white')
+    expect(footer).toHaveClass('bg-gray-800', 'text-white', 'h-44')
   })
 
   it('uses Container component correctly', () => {
@@ -52,7 +52,7 @@ describe('Footer', () => {
     
     // Check that Container classes are applied
     const container = screen.getByAltText('A APPLY DIGITAL').closest('div')?.parentElement
-    expect(container).toHaveClass('w-full', 'mx-auto', 'px-4', 'sm:px-6', 'lg:px-8', 'max-w-[1280px]', 'py-4')
+    expect(container).toHaveClass('w-full', 'mx-auto', 'px-4', 'sm:px-6', 'lg:px-8', 'max-w-[1280px]', 'h-full')
   })
 
   it('renders company logo as a link to home', () => {
@@ -65,7 +65,7 @@ describe('Footer', () => {
     const logo = screen.getByAltText('A APPLY DIGITAL')
     expect(logo).toBeInTheDocument()
     expect(logo).toHaveAttribute('src', '/logo_white.svg')
-    expect(logo).toHaveClass('h-8', 'w-auto')
+    expect(logo).toHaveClass('h-12', 'w-auto')
   })
 
   it('has centered logo layout', () => {
