@@ -84,6 +84,9 @@ const Header: React.FC = memo(() => {
                    <div className="flex items-center gap-6">
                      {/* Genre Filter */}
                      <GenreFilter />
+                     
+                     {/* Cart Icon */}
+                     <CartIcon />
                    </div>
                  </div>
         </Container>

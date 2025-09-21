@@ -9,6 +9,7 @@ import { Container } from '../../components/Container'
 import { Game } from '../../utils/endpoint'
 import { GamesResponse } from '../../services/gamesService'
 import { gamesService } from '../../services/gamesService'
+import { cartService } from '../../services/cartService'
 
 const CatalogPage: React.FC = memo(() => {
   const [games, setGames] = useState<Game[]>([])
@@ -16,11 +17,45 @@ const CatalogPage: React.FC = memo(() => {
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
+  const [cartItems, setCartItems] = useState<string[]>([])
   
   const searchParams = useSearchParams()
   const genre = searchParams.get('genre') || ''
   const searchQuery = searchParams.get('search') || ''
   const page = parseInt(searchParams.get('page') || '1')
+
+  // Load cart items on component mount
+  useEffect(() => {
+    const loadCartItems = () => {
+      try {
+        const items = cartService.getCartItems()
+        setCartItems(items.map(item => item.id))
+      } catch (error) {
+        console.error('Error loading cart items:', error)
+      }
+    }
+    loadCartItems()
+  }, [])
+
+  const handleAddToCart = (game: Game) => {
+    try {
+      cartService.addToCart(game)
+      setCartItems(prev => [...prev, game.id])
+    } catch (error) {
+      console.error('Error adding to cart:', error)
+    }
+  }
+
+  const handleRemoveFromCart = (gameId: string) => {
+    try {
+      cartService.removeFromCart(gameId)
+      setCartItems(prev => prev.filter(id => id !== gameId))
+    } catch (error) {
+      console.error('Error removing from cart:', error)
+    }
+  }
+
+  const isInCart = (gameId: string) => cartItems.includes(gameId)
 
   const loadGames = async (pageNum: number = 1, genreFilter: string = '', searchTerm: string = '') => {
     try {
@@ -138,9 +173,21 @@ const CatalogPage: React.FC = memo(() => {
                   <p className="text-sm text-gray-700 mb-3 line-clamp-2">{game.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-xl font-bold text-blue-600">${game.price}</span>
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-200">
-                      Add to Cart
-                    </button>
+                    {isInCart(game.id) ? (
+                      <button 
+                        onClick={() => handleRemoveFromCart(game.id)}
+                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors duration-200"
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => handleAddToCart(game)}
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-200"
+                      >
+                        Add to Cart
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
