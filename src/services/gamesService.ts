@@ -70,7 +70,7 @@ class GamesService {
    * Searches games by name
    */
   async searchGames(query: string, filters: GamesFilters = {}): Promise<GamesResponse> {
-    const response = await this.getGames(filters)
+    const response = await this.getGames(filters.page || 1, filters.genre)
     
     if (!query.trim()) {
       return response

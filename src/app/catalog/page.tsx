@@ -1,10 +1,14 @@
 'use client'
 
 import React, { memo, useEffect, useState } from 'react'
+
+export const dynamic = 'force-dynamic'
 import { useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { Container } from '../../components/Container'
 import { Game } from '../../utils/endpoint'
-import { GamesService } from '../../services/gamesService'
+import { GamesResponse } from '../../services/gamesService'
+import { gamesService } from '../../services/gamesService'
 
 const CatalogPage: React.FC = memo(() => {
   const [games, setGames] = useState<Game[]>([])
@@ -23,13 +27,13 @@ const CatalogPage: React.FC = memo(() => {
       setIsLoading(true)
       setError(null)
       
-      let data
+      let data: GamesResponse
       if (searchTerm.trim()) {
         // Use search service when there's a search query
-        data = await GamesService.searchGames(searchTerm, { page: pageNum, genre: genreFilter })
+        data = await gamesService.searchGames(searchTerm, { page: pageNum, genre: genreFilter })
       } else {
         // Use regular games service when no search
-        data = await GamesService.getGames(pageNum, genreFilter)
+        data = await gamesService.getGames(pageNum, genreFilter)
       }
       
       setGames(data.games)
@@ -49,11 +53,11 @@ const CatalogPage: React.FC = memo(() => {
     try {
       setIsLoading(true)
       const nextPage = currentPage + 1
-      let data
+      let data: GamesResponse
       if (searchQuery.trim()) {
-        data = await GamesService.searchGames(searchQuery, { page: nextPage, genre })
+        data = await gamesService.searchGames(searchQuery, { page: nextPage, genre })
       } else {
-        data = await GamesService.getGames(nextPage, genre)
+        data = await gamesService.getGames(nextPage, genre)
       }
       
       setGames(prev => [...prev, ...data.games])
@@ -83,7 +87,7 @@ const CatalogPage: React.FC = memo(() => {
             <div className="flex flex-wrap gap-2 mb-4">
               {searchQuery && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                  Search: "{searchQuery}"
+                  Search: &quot;{searchQuery}&quot;
                 </span>
               )}
               {genre && (
@@ -115,9 +119,11 @@ const CatalogPage: React.FC = memo(() => {
             {games.map((game) => (
               <div key={game.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200">
                 <div className="relative">
-                  <img
+                  <Image
                     src={game.image}
                     alt={game.name}
+                    width={400}
+                    height={192}
                     className="w-full h-48 object-cover"
                   />
                   {game.isNew && (

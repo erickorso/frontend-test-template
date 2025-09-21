@@ -1,6 +1,8 @@
 'use client'
 
 import React, { memo, useEffect, useState } from 'react'
+
+export const dynamic = 'force-dynamic'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Container } from '../../components/Container'
