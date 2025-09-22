@@ -10,7 +10,7 @@ export default function Home() {
       <section className='bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20'>
         <Container className="text-center">
           <h1 className='text-4xl md:text-6xl font-bold mb-6'>
-            Welcome to Game Store
+            ErickShop
           </h1>
           <p className='text-xl md:text-2xl mb-8 text-blue-100'>
             Discover amazing games and build your collection
@@ -18,6 +18,16 @@ export default function Home() {
           <Link href="/catalog" className='bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors duration-200 inline-block'>
             Browse Games
           </Link>
+          <div className="mt-4">
+            <a 
+              href="https://github.com/erickorso/frontend-test-template.git" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-200 hover:text-white transition-colors duration-200 text-sm"
+            >
+              @https://github.com/erickorso/frontend-test-template.git
+            </a>
+          </div>
         </Container>
       </section>
 

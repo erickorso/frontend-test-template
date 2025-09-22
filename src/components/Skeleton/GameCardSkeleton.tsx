@@ -5,7 +5,7 @@ const GameCardSkeleton: React.FC = () => {
     <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 animate-pulse">
       <div className="relative p-3">
         {/* Image skeleton */}
-        <div className="w-full h-48 bg-gray-300 rounded-t"></div>
+        <div className="w-full h-60 bg-gray-300 rounded-t"></div>
         
         {/* Content skeleton */}
         <div className="p-3">

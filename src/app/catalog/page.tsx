@@ -188,7 +188,7 @@ const CatalogPage: React.FC = memo(() => {
 
           {/* Skeleton loading for initial load */}
           {isLoading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8 animate-fadeIn">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 animate-fadeIn">
               {Array.from({ length: 8 }).map((_, index) => (
                 <GameCardSkeleton key={index} />
               ))}
@@ -197,7 +197,7 @@ const CatalogPage: React.FC = memo(() => {
 
           {/* Game Grid */}
           {!isLoading && games.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {games.map((game, index) => (
                 <motion.div
                   key={game.id}
@@ -221,8 +221,8 @@ const CatalogPage: React.FC = memo(() => {
                       src={game.image}
                       alt={game.name}
                       width={400}
-                      height={192}
-                      className="w-full h-48 object-cover rounded-t"
+                      height={240}
+                      className="w-full h-60 object-cover rounded-t"
                     />
                     {game.isNew && (
                       <span className="absolute top-4 left-4 bg-white text-gray-800 text-xs font-bold px-2 py-1 rounded border border-gray-200">
