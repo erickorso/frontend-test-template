@@ -29,18 +29,20 @@ const CartPage: React.FC<CartPageProps> = memo(() => {
         
         // Add minimum delay to show skeleton (only in production)
         const [items, summary] = await Promise.all([
-          new Promise<CartItem[]>(resolve => {
-            const delay = process.env.NODE_ENV === 'test' ? 0 : 1000
-            setTimeout(() => {
-              resolve(cartService.getCartItems())
-            }, delay)
-          }),
-          new Promise<{totalItems: number, totalPrice: number}>(resolve => {
-            const delay = process.env.NODE_ENV === 'test' ? 0 : 1000
-            setTimeout(() => {
-              resolve(cartService.getCartSummary())
-            }, delay)
-          })
+          process.env.NODE_ENV === 'test' 
+            ? Promise.resolve(cartService.getCartItems())
+            : new Promise<CartItem[]>(resolve => {
+                setTimeout(() => {
+                  resolve(cartService.getCartItems())
+                }, 1000)
+              }),
+          process.env.NODE_ENV === 'test'
+            ? Promise.resolve(cartService.getCartSummary())
+            : new Promise<{totalItems: number, totalPrice: number}>(resolve => {
+                setTimeout(() => {
+                  resolve(cartService.getCartSummary())
+                }, 1000)
+              })
         ])
         
         setCartItems(items)

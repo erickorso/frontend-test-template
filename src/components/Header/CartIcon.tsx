@@ -6,12 +6,14 @@ import { useAppSelector } from '../../store/hooks'
 
 const CartIcon: React.FC = memo(() => {
   const { totalItems } = useAppSelector((state) => state.cart.summary)
+  const isCartOpen = useAppSelector((state) => state.ui.isCartOpen)
 
   return (
     <Link
       href="/cart"
       className="relative p-3 text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-xl group"
       aria-label={`Shopping cart with ${totalItems} items`}
+      aria-expanded={isCartOpen}
     >
       <svg
         className="w-6 h-6 group-hover:scale-110 transition-transform duration-200"

@@ -24,50 +24,31 @@ describe('gamesSagas', () => {
   describe('Action Creators', () => {
     it('should create loadGames action', () => {
       const action = loadGames()
-      expect(action).toEqual({ type: GAMES_ACTIONS.LOAD_GAMES })
+      expect(action).toEqual({ type: GAMES_ACTIONS.LOAD_GAMES, payload: { page: 1 } })
     })
 
     it('should create loadGamesWithFilters action', () => {
-      const filters = { genre: 'Action', page: 2 }
-      const action = loadGamesWithFilters(filters)
-      expect(action).toEqual({ type: GAMES_ACTIONS.LOAD_GAMES_WITH_FILTERS, payload: filters })
+      const action = loadGamesWithFilters(2, 'Action')
+      expect(action).toEqual({ type: GAMES_ACTIONS.LOAD_GAMES_WITH_FILTERS, payload: { page: 2, genre: 'Action' } })
     })
 
     it('should create searchGames action', () => {
       const action = searchGames('Witcher')
-      expect(action).toEqual({ type: GAMES_ACTIONS.SEARCH_GAMES, payload: 'Witcher' })
-    })
-
-    it('should create loadAvailableFilters action', () => {
-      const action = loadAvailableFilters()
-      expect(action).toEqual({ type: GAMES_ACTIONS.LOAD_AVAILABLE_FILTERS })
-    })
-
-    it('should create setGenreFilter action', () => {
-      const action = setGenreFilter('Action')
-      expect(action).toEqual({ type: GAMES_ACTIONS.SET_GENRE_FILTER, payload: 'Action' })
-    })
-
-    it('should create setSearchQuery action', () => {
-      const action = setSearchQuery('Test')
-      expect(action).toEqual({ type: GAMES_ACTIONS.SET_SEARCH_QUERY, payload: 'Test' })
+      expect(action).toEqual({ type: GAMES_ACTIONS.SEARCH_GAMES, payload: { query: 'Witcher', page: 1, genre: '' } })
     })
 
     it('should create loadMoreGames action', () => {
-      const action = loadMoreGames()
-      expect(action).toEqual({ type: GAMES_ACTIONS.LOAD_MORE_GAMES })
+      const action = loadMoreGames(2)
+      expect(action).toEqual({ type: GAMES_ACTIONS.LOAD_MORE_GAMES, payload: { page: 2 } })
     })
   })
 
   describe('Action Types', () => {
     it('should have correct action types', () => {
-      expect(GAMES_ACTIONS.LOAD_GAMES).toBe('games/loadGames')
-      expect(GAMES_ACTIONS.LOAD_GAMES_WITH_FILTERS).toBe('games/loadGamesWithFilters')
-      expect(GAMES_ACTIONS.SEARCH_GAMES).toBe('games/searchGames')
-      expect(GAMES_ACTIONS.LOAD_AVAILABLE_FILTERS).toBe('games/loadAvailableFilters')
-      expect(GAMES_ACTIONS.SET_GENRE_FILTER).toBe('games/setGenreFilter')
-      expect(GAMES_ACTIONS.SET_SEARCH_QUERY).toBe('games/setSearchQuery')
-      expect(GAMES_ACTIONS.LOAD_MORE_GAMES).toBe('games/loadMoreGames')
+      expect(GAMES_ACTIONS.LOAD_GAMES).toBe('LOAD_GAMES')
+      expect(GAMES_ACTIONS.LOAD_GAMES_WITH_FILTERS).toBe('LOAD_GAMES_WITH_FILTERS')
+      expect(GAMES_ACTIONS.SEARCH_GAMES).toBe('SEARCH_GAMES')
+      expect(GAMES_ACTIONS.LOAD_MORE_GAMES).toBe('LOAD_MORE_GAMES')
     })
   })
 

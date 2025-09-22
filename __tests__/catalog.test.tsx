@@ -103,7 +103,7 @@ describe('CatalogPage', () => {
     })
     
     // Check for Action genre in the game card specifically
-    const gameCards = screen.getAllByText('Action')
+    const gameCards = screen.getAllByText('Genre: Action')
     expect(gameCards).toHaveLength(1) // Only in game card (no select in catalog page)
   })
 
@@ -149,7 +149,7 @@ describe('CatalogPage', () => {
     render(<CatalogPage />)
     
     await waitFor(() => {
-      expect(screen.getByText('No games found for the selected genre.')).toBeInTheDocument()
+      expect(screen.getByText('No games found')).toBeInTheDocument()
     })
   })
 
@@ -243,7 +243,7 @@ describe('CatalogPage', () => {
       render(<CatalogPage />)
       
       await waitFor(() => {
-        expect(screen.getByText('No games found for the selected genre.')).toBeInTheDocument()
+        expect(screen.getByText('No games found')).toBeInTheDocument()
       })
     })
   })

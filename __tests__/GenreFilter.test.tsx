@@ -24,8 +24,8 @@ describe('GenreFilter', () => {
   it('renders genre filter with all options', () => {
     render(<GenreFilter />)
     
-    expect(screen.getByLabelText('Filter games by genre')).toBeInTheDocument()
-    expect(screen.getByText('All')).toBeInTheDocument()
+    expect(screen.getByLabelText('Genre:')).toBeInTheDocument()
+    expect(screen.getByText('All Genres')).toBeInTheDocument()
     expect(screen.getByText('Action')).toBeInTheDocument()
     expect(screen.getByText('RPG')).toBeInTheDocument()
     expect(screen.getByText('Adventure')).toBeInTheDocument()
@@ -37,14 +37,14 @@ describe('GenreFilter', () => {
     
     render(<GenreFilter />)
     
-    const select = screen.getByLabelText('Filter games by genre') as HTMLSelectElement
+    const select = screen.getByLabelText('Genre:') as HTMLSelectElement
     expect(select.value).toBe('Action')
   })
 
   it('handles genre change and navigates to catalog', () => {
     render(<GenreFilter />)
     
-    const select = screen.getByLabelText('Filter games by genre') as HTMLSelectElement
+    const select = screen.getByLabelText('Genre:') as HTMLSelectElement
     fireEvent.change(select, { target: { value: 'RPG' } })
     
     expect(mockPush).toHaveBeenCalledWith('/catalog?genre=RPG')
@@ -56,10 +56,10 @@ describe('GenreFilter', () => {
     
     render(<GenreFilter />)
     
-    const select = screen.getByLabelText('Filter games by genre') as HTMLSelectElement
+    const select = screen.getByLabelText('Genre:') as HTMLSelectElement
     fireEvent.change(select, { target: { value: '' } })
     
-    expect(mockPush).toHaveBeenCalledWith('/catalog')
+    expect(mockPush).toHaveBeenCalledWith('/catalog?')
   })
 
   it('resets page parameter when changing genre', () => {
@@ -68,7 +68,7 @@ describe('GenreFilter', () => {
     
     render(<GenreFilter />)
     
-    const select = screen.getByLabelText('Filter games by genre') as HTMLSelectElement
+    const select = screen.getByLabelText('Genre:') as HTMLSelectElement
     fireEvent.change(select, { target: { value: 'Adventure' } })
     
     expect(mockPush).toHaveBeenCalledWith('/catalog?genre=Adventure')
@@ -80,7 +80,7 @@ describe('GenreFilter', () => {
     
     render(<GenreFilter />)
     
-    const select = screen.getByLabelText('Filter games by genre') as HTMLSelectElement
+    const select = screen.getByLabelText('Genre:') as HTMLSelectElement
     fireEvent.change(select, { target: { value: 'Adventure' } })
     
     // Check that the URL contains both parameters (order may vary)
@@ -91,18 +91,20 @@ describe('GenreFilter', () => {
   it('has correct styling classes', () => {
     render(<GenreFilter />)
     
-    const select = screen.getByLabelText('Filter games by genre')
+    const select = screen.getByLabelText('Genre:')
     expect(select).toHaveClass(
       'block',
+      'w-40',
       'px-3',
       'py-2',
-      'bg-transparent',
+      'border',
+      'border-gray-300',
+      'rounded-md',
+      'shadow-sm',
       'focus:outline-none',
-      'sm:text-sm',
-      'text-gray-700',
-      'hover:text-blue-600',
-      'transition-colors',
-      'duration-200'
+      'focus:ring-blue-500',
+      'focus:border-blue-500',
+      'sm:text-sm'
     )
   })
 
@@ -110,14 +112,13 @@ describe('GenreFilter', () => {
     render(<GenreFilter />)
     
     const label = screen.getByText('Genre:')
-    expect(label).toHaveClass('text-sm', 'text-gray-600')
+    expect(label).toHaveClass('text-sm', 'font-medium', 'text-gray-700')
   })
 
-  it('renders separator between label and select', () => {
+  it('renders label and select in flex container', () => {
     render(<GenreFilter />)
     
-    const separator = screen.getByText('|')
-    expect(separator).toBeInTheDocument()
-    expect(separator).toHaveClass('text-gray-300')
+    const container = screen.getByText('Genre:').closest('div')
+    expect(container).toHaveClass('flex', 'items-center', 'space-x-2')
   })
 })

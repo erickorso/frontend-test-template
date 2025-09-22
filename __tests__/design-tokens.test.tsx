@@ -10,13 +10,13 @@ jest.mock('next/font/google', () => ({
 describe('Design Tokens Integration', () => {
   it('applies custom color tokens correctly', () => {
     render(<Home />)
-    const heroSection = screen.getByText('Welcome to Game Store').closest('section')
+    const heroSection = screen.getByText('ErickShop').closest('section')
     expect(heroSection).toHaveClass('from-blue-600', 'to-purple-600', 'text-white')
   })
 
   it('applies typography tokens correctly', () => {
     render(<Home />)
-    const heroHeading = screen.getByText('Welcome to Game Store')
+    const heroHeading = screen.getByText('ErickShop')
     expect(heroHeading).toHaveClass('font-bold', 'text-4xl', 'md:text-6xl')
   })
 

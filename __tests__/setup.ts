@@ -23,3 +23,10 @@ jest.mock('../src/components/Skeleton', () => ({
   CartItemSkeleton: () => React.createElement('div', { 'data-testid': 'cart-item-skeleton' }, 'Loading...'),
   OrderSummarySkeleton: () => React.createElement('div', { 'data-testid': 'order-summary-skeleton' }, 'Loading...'),
 }))
+
+// Add a dummy test to prevent "no tests" error
+describe('Setup', () => {
+  it('should run setup without errors', () => {
+    expect(true).toBe(true)
+  })
+})

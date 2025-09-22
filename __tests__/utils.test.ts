@@ -77,13 +77,19 @@ describe('Game Data Utils', () => {
   })
 
   it('delay function works correctly', async () => {
+    // Use real timers for this test
+    jest.useRealTimers()
+    
     const startTime = Date.now()
     await delay(100)
     const endTime = Date.now()
     
     // Should wait at least 100ms
     expect(endTime - startTime).toBeGreaterThanOrEqual(100)
-  })
+    
+    // Restore fake timers
+    jest.useFakeTimers()
+  }, 60000)
 
   it('delay function returns a promise', () => {
     const delayPromise = delay(100)

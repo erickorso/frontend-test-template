@@ -116,29 +116,26 @@ describe('CartIcon', () => {
     expect(countBadge).not.toBeInTheDocument()
   })
 
-  it('toggles cart when clicked', () => {
+  it('navigates to cart when clicked', () => {
     renderWithProvider(<CartIcon />)
     
-    const cartButton = screen.getByLabelText(/Shopping cart with \d+ items/)
-    fireEvent.click(cartButton)
-    
-    const state = store.getState()
-    expect(state.ui.isCartOpen).toBe(true)
+    const cartLink = screen.getByLabelText(/Shopping cart with \d+ items/)
+    expect(cartLink).toHaveAttribute('href', '/cart')
   })
 
   it('has correct accessibility attributes', () => {
     renderWithProvider(<CartIcon />)
     
-    const cartButton = screen.getByLabelText(/Shopping cart with \d+ items/)
-    expect(cartButton).toHaveAttribute('aria-label')
-    expect(cartButton).toHaveAttribute('aria-expanded', 'false')
+    const cartLink = screen.getByLabelText(/Shopping cart with \d+ items/)
+    expect(cartLink).toHaveAttribute('aria-label')
+    expect(cartLink).toHaveAttribute('aria-expanded', 'false')
   })
 
   it('has correct focus styles', () => {
     renderWithProvider(<CartIcon />)
     
-    const cartButton = screen.getByLabelText(/Shopping cart with \d+ items/)
-    expect(cartButton).toHaveClass('focus:outline-none', 'focus:ring-2', 'focus:ring-blue-500', 'focus:ring-offset-2')
+    const cartLink = screen.getByLabelText(/Shopping cart with \d+ items/)
+    expect(cartLink).toHaveClass('focus:outline-none', 'focus:ring-2', 'focus:ring-blue-500', 'focus:ring-offset-2')
   })
 
   it('updates aria-expanded when cart is open', () => {
@@ -152,7 +149,7 @@ describe('CartIcon', () => {
       </Provider>
     )
     
-    const cartButton = screen.getByLabelText(/Shopping cart with \d+ items/)
-    expect(cartButton).toHaveAttribute('aria-expanded', 'true')
+    const cartLink = screen.getByLabelText(/Shopping cart with \d+ items/)
+    expect(cartLink).toHaveAttribute('aria-expanded', 'true')
   })
 })
