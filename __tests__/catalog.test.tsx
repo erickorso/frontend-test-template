@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { useSearchParams } from 'next/navigation'
 import CatalogPage from '../src/app/catalog/page'
-import { GamesService } from '../src/services/gamesService'
+import { gamesService } from '../src/services/gamesService'
 
 // Mock Next.js navigation hooks
 jest.mock('next/navigation', () => ({
@@ -12,7 +12,7 @@ jest.mock('next/navigation', () => ({
 
 // Mock GamesService
 jest.mock('../src/services/gamesService', () => ({
-  GamesService: {
+  gamesService: {
     getGames: jest.fn(),
     searchGames: jest.fn(),
   },
@@ -52,7 +52,8 @@ describe('CatalogPage', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     ;(useSearchParams as jest.Mock).mockReturnValue(mockSearchParams)
-    ;(GamesService.getGames as jest.Mock).mockResolvedValue(mockGamesResponse)
+    ;(gamesService.getGames as jest.Mock).mockResolvedValue(mockGamesResponse)
+    jest.runAllTimers()
   })
 
   it('renders catalog page with title', async () => {
@@ -124,11 +125,11 @@ describe('CatalogPage', () => {
     const seeMoreButton = screen.getByText('See More')
     fireEvent.click(seeMoreButton)
     
-    expect(GamesService.getGames).toHaveBeenCalledWith(2, '')
+    expect(gamesService.getGames).toHaveBeenCalledWith(2, '')
   })
 
   it('shows error message when games fail to load', async () => {
-    ;(GamesService.getGames as jest.Mock).mockRejectedValue(new Error('API Error'))
+    ;(gamesService.getGames as jest.Mock).mockRejectedValue(new Error('API Error'))
     
     render(<CatalogPage />)
     
@@ -138,7 +139,7 @@ describe('CatalogPage', () => {
   })
 
   it('shows no games message when no games found', async () => {
-    ;(GamesService.getGames as jest.Mock).mockResolvedValue({
+    ;(gamesService.getGames as jest.Mock).mockResolvedValue({
       games: [],
       availableFilters: [],
       totalPages: 0,
@@ -159,7 +160,7 @@ describe('CatalogPage', () => {
     render(<CatalogPage />)
     
     await waitFor(() => {
-      expect(GamesService.getGames).toHaveBeenCalledWith(1, 'Action')
+      expect(gamesService.getGames).toHaveBeenCalledWith(1, 'Action')
     })
   })
 
@@ -171,7 +172,7 @@ describe('CatalogPage', () => {
     render(<CatalogPage />)
     
     await waitFor(() => {
-      expect(GamesService.getGames).toHaveBeenCalledWith(2, '')
+      expect(gamesService.getGames).toHaveBeenCalledWith(2, '')
     })
   })
 
@@ -180,7 +181,7 @@ describe('CatalogPage', () => {
       const mockSearchParams = new URLSearchParams('search=zelda')
       ;(useSearchParams as jest.Mock).mockReturnValue(mockSearchParams)
       
-      ;(GamesService.searchGames as jest.Mock).mockResolvedValue({
+      ;(gamesService.searchGames as jest.Mock).mockResolvedValue({
         games: mockGames,
         currentPage: 1,
         totalPages: 1,
@@ -197,7 +198,7 @@ describe('CatalogPage', () => {
       const mockSearchParams = new URLSearchParams('search=zelda')
       ;(useSearchParams as jest.Mock).mockReturnValue(mockSearchParams)
       
-      ;(GamesService.searchGames as jest.Mock).mockResolvedValue({
+      ;(gamesService.searchGames as jest.Mock).mockResolvedValue({
         games: mockGames,
         currentPage: 1,
         totalPages: 1,
@@ -206,7 +207,7 @@ describe('CatalogPage', () => {
       render(<CatalogPage />)
       
       await waitFor(() => {
-        expect(GamesService.searchGames).toHaveBeenCalledWith('zelda', { page: 1, genre: '' })
+        expect(gamesService.searchGames).toHaveBeenCalledWith('zelda', { page: 1, genre: '' })
       })
     })
 
@@ -214,7 +215,7 @@ describe('CatalogPage', () => {
       const mockSearchParams = new URLSearchParams('search=zelda&genre=Adventure')
       ;(useSearchParams as jest.Mock).mockReturnValue(mockSearchParams)
       
-      ;(GamesService.searchGames as jest.Mock).mockResolvedValue({
+      ;(gamesService.searchGames as jest.Mock).mockResolvedValue({
         games: mockGames,
         currentPage: 1,
         totalPages: 1,
@@ -223,7 +224,7 @@ describe('CatalogPage', () => {
       render(<CatalogPage />)
       
       await waitFor(() => {
-        expect(GamesService.searchGames).toHaveBeenCalledWith('zelda', { page: 1, genre: 'Adventure' })
+        expect(gamesService.searchGames).toHaveBeenCalledWith('zelda', { page: 1, genre: 'Adventure' })
         expect(screen.getByText('Search: "zelda"')).toBeInTheDocument()
         expect(screen.getByText('Genre: Adventure')).toBeInTheDocument()
       })
@@ -233,7 +234,7 @@ describe('CatalogPage', () => {
       const mockSearchParams = new URLSearchParams('search=nonexistent')
       ;(useSearchParams as jest.Mock).mockReturnValue(mockSearchParams)
       
-      ;(GamesService.searchGames as jest.Mock).mockResolvedValue({
+      ;(gamesService.searchGames as jest.Mock).mockResolvedValue({
         games: [],
         currentPage: 1,
         totalPages: 1,

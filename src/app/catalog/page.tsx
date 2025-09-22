@@ -49,7 +49,7 @@ const CatalogPage: React.FC = memo(() => {
         setIsFilterLoading(true)
         setError(null)
         
-        // Add minimum delay to show skeleton
+        // Add minimum delay to show skeleton (only in production)
         const [data] = await Promise.all([
           (async () => {
             if (search && search.trim()) {
@@ -58,7 +58,9 @@ const CatalogPage: React.FC = memo(() => {
               return await gamesService.getGames(page, genre)
             }
           })(),
-          new Promise(resolve => setTimeout(resolve, 1000)) // Minimum 1 second delay
+          process.env.NODE_ENV === 'test' 
+            ? Promise.resolve() 
+            : new Promise(resolve => setTimeout(resolve, 1000)) // Minimum 1 second delay
         ])
         
         setGames(data.games)

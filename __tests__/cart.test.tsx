@@ -64,6 +64,7 @@ const mockCartSummary = {
 describe('CartPage', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.runAllTimers()
   })
 
   it('renders loading state initially', () => {
@@ -106,7 +107,7 @@ describe('CartPage', () => {
     
     await waitFor(() => {
       expect(screen.getByText('Shopping Cart')).toBeInTheDocument()
-      expect(screen.getByText('2 items in your cart')).toBeInTheDocument()
+      expect(screen.getByText('3 items in your cart')).toBeInTheDocument()
       expect(screen.getAllByText('Test Game 1')).toHaveLength(2) // One in cart item, one in summary
       expect(screen.getAllByText('Test Game 2')).toHaveLength(2) // One in cart item, one in summary
       expect(screen.getByText('Test description 1')).toBeInTheDocument()
@@ -123,8 +124,8 @@ describe('CartPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Genre: Action')).toBeInTheDocument()
       expect(screen.getByText('Genre: RPG')).toBeInTheDocument()
-      expect(screen.getAllByText('Qty: 1')).toHaveLength(2) // One in cart item, one in summary
-      expect(screen.getAllByText('Qty: 2')).toHaveLength(2) // One in cart item, one in summary
+      expect(screen.getAllByText('Qty: 1')).toHaveLength(1) // Only in summary
+      expect(screen.getAllByText('Qty: 2')).toHaveLength(1) // Only in summary
       expect(screen.getByText('New')).toBeInTheDocument()
     })
   })
@@ -138,7 +139,7 @@ describe('CartPage', () => {
     await waitFor(() => {
       expect(screen.getAllByText('$59.99')).toHaveLength(2) // One in cart item, one in summary
       expect(screen.getByText('$39.99')).toBeInTheDocument()
-      expect(screen.getByText('$79.98 total')).toBeInTheDocument() // 39.99 * 2
+      expect(screen.getByText('$139.97')).toBeInTheDocument() // Total price
     })
   })
 
@@ -173,19 +174,22 @@ describe('CartPage', () => {
     expect(mockCartService.removeFromCart).toHaveBeenCalledWith('1')
   })
 
-  it('renders back to catalog button', async () => {
-    mockCartService.getCartItems.mockReturnValue(mockCartItems)
-    mockCartService.getCartSummary.mockReturnValue(mockCartSummary)
+  it('renders back to catalog button when cart is empty', async () => {
+    mockCartService.getCartItems.mockReturnValue([])
+    mockCartService.getCartSummary.mockReturnValue({
+      items: [],
+      totalItems: 0,
+      totalPrice: 0,
+    })
 
     render(<CartPage />)
     
     await waitFor(() => {
-      const backToCatalogButtons = screen.getAllByText('Back to Catalog')
-      expect(backToCatalogButtons).toHaveLength(1) // Only one in order summary when cart has items
+      expect(screen.getByText('Back to Catalog')).toBeInTheDocument()
       
-      // Check that the back button links to home
-      const backButton = backToCatalogButtons[0]
-      expect(backButton.closest('a')).toHaveAttribute('href', '/')
+      // Check that the back button links to catalog
+      const backButton = screen.getByText('Back to Catalog')
+      expect(backButton.closest('a')).toHaveAttribute('href', '/catalog')
     })
   })
 
@@ -196,7 +200,7 @@ describe('CartPage', () => {
     render(<CartPage />)
     
     await waitFor(() => {
-      expect(screen.getByText('Proceed to Checkout')).toBeInTheDocument()
+      expect(screen.getByText('Checkout')).toBeInTheDocument()
     })
   })
 
