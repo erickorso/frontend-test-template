@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { gamesService, GamesResponse } from '../services/gamesService'
 import { Game } from '../utils/endpoint'
 
@@ -26,7 +26,7 @@ export const useGames = ({ genre, page, search }: UseGamesProps): UseGamesReturn
   const [currentPage, setCurrentPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
 
-  const loadGames = async () => {
+  const loadGames = useCallback(async () => {
     try {
       setIsLoading(true)
       setIsFilterLoading(true)
@@ -71,7 +71,7 @@ export const useGames = ({ genre, page, search }: UseGamesProps): UseGamesReturn
       setIsLoading(false)
       setIsFilterLoading(false)
     }
-  }
+  }, [genre, search, page])
 
   const loadMoreGames = async () => {
     if (isLoading || !hasMore) return
@@ -99,7 +99,7 @@ export const useGames = ({ genre, page, search }: UseGamesProps): UseGamesReturn
 
   useEffect(() => {
     loadGames()
-  }, [genre, page, search])
+  }, [genre, page, search, loadGames])
 
   return {
     games,
