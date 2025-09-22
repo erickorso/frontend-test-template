@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo } from 'react'
 import { motion } from 'framer-motion'
 
 export const dynamic = 'force-dynamic'
@@ -9,118 +9,22 @@ import Image from 'next/image'
 import { Container } from '../../components/Container'
 import { GameCardSkeleton } from '../../components/Skeleton'
 import { PageTransition } from '../../components/PageTransition'
-import { Game } from '../../utils/endpoint'
-import { cartService } from '../../services/cartService'
-import { gamesService, GamesResponse } from '../../services/gamesService'
+import { useGames, useCartItems } from '../../hooks'
 
 const CatalogPage: React.FC = memo(() => {
-  const [games, setGames] = useState<Game[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [hasMore, setHasMore] = useState(false)
-  const [cartItems, setCartItems] = useState<string[]>([])
-  const [isFilterLoading, setIsFilterLoading] = useState(false)
-  
   const searchParams = useSearchParams()
   const router = useRouter()
   const genre = searchParams.get('genre') || ''
   const search = searchParams.get('search') || ''
   const page = parseInt(searchParams.get('page') || '1')
 
-  // Load cart items on component mount
-  useEffect(() => {
-    const loadCartItems = () => {
-      try {
-        const items = cartService.getCartItems()
-        setCartItems(items.map(item => item.id))
-      } catch (error) {
-        console.error('Error loading cart items:', error)
-      }
-    }
-    loadCartItems()
-  }, [])
+  const { games, isLoading, isFilterLoading, error, currentPage, hasMore, loadMoreGames } = useGames({
+    genre,
+    page,
+    search
+  })
 
-  // Load games when URL params change
-  useEffect(() => {
-    const loadGames = async () => {
-      try {
-        setIsLoading(true)
-        setIsFilterLoading(true)
-        setError(null)
-        
-        // Add minimum delay to show skeleton (only in production)
-        const [data] = await Promise.all([
-          (async () => {
-            if (search && search.trim()) {
-              return await gamesService.searchGames(search, { page, genre })
-            } else {
-              return await gamesService.getGames(page, genre)
-            }
-          })(),
-          process.env.NODE_ENV === 'test' 
-            ? Promise.resolve() 
-            : new Promise(resolve => setTimeout(resolve, 1000)) // Minimum 1 second delay
-        ])
-        
-        setGames(data.games)
-        setCurrentPage(data.currentPage)
-        setHasMore(data.currentPage < data.totalPages)
-      } catch (err) {
-        setError('Failed to load games. Please try again.')
-        console.error('Error loading games:', err)
-      } finally {
-        setIsLoading(false)
-        setIsFilterLoading(false)
-      }
-    }
-
-    loadGames()
-  }, [genre, page, search])
-
-  const handleAddToCart = (game: Game) => {
-    try {
-      cartService.addToCart(game)
-      setCartItems(prev => [...prev, game.id])
-    } catch (error) {
-      console.error('Error adding to cart:', error)
-    }
-  }
-
-  const handleRemoveFromCart = (gameId: string) => {
-    try {
-      cartService.removeFromCart(gameId)
-      setCartItems(prev => prev.filter(id => id !== gameId))
-    } catch (error) {
-      console.error('Error removing from cart:', error)
-    }
-  }
-
-  const isInCart = (gameId: string) => cartItems.includes(gameId)
-
-  const loadMoreGames = async () => {
-    if (isLoading || !hasMore) return
-    
-    try {
-      setIsLoading(true)
-      const nextPage = currentPage + 1
-      let data: GamesResponse
-      if (search && search.trim()) {
-        data = await gamesService.searchGames(search, { page: nextPage, genre })
-      } else {
-        data = await gamesService.getGames(nextPage, genre)
-      }
-      
-      setGames(prev => [...prev, ...data.games])
-      setCurrentPage(data.currentPage)
-      setHasMore(data.currentPage < data.totalPages)
-    } catch (err) {
-      setError('Failed to load more games. Please try again.')
-      console.error('Error loading more games:', err)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const { isInCart, addToCart, removeFromCart } = useCartItems()
 
   // Function to remove search filter
   const removeSearchFilter = () => {
