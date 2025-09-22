@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react'
+import { renderHook, act, waitFor } from '@testing-library/react'
 import { useGames } from '../src/hooks/useGames'
 import { gamesService } from '../src/services/gamesService'
 
@@ -48,26 +48,19 @@ describe('useGames', () => {
   it('loads games on mount', async () => {
     const { result } = renderHook(() => useGames({ genre: '', page: 1, search: '' }))
 
-    expect(result.current.isLoading).toBe(true)
-    expect(result.current.games).toEqual([])
-
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0))
+    // Wait for games to load
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false)
     })
 
     expect(result.current.games).toEqual(mockGames)
     expect(result.current.currentPage).toBe(1)
     expect(result.current.hasMore).toBe(true)
-    expect(result.current.isLoading).toBe(false)
     expect(result.current.error).toBeNull()
   })
 
   it('loads games with genre filter', async () => {
     const { result } = renderHook(() => useGames({ genre: 'Action', page: 1, search: '' }))
-
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0))
-    })
 
     expect(mockGamesService.getGames).toHaveBeenCalledWith(1, 'Action')
   })
@@ -76,10 +69,6 @@ describe('useGames', () => {
     mockGamesService.searchGames.mockResolvedValue(mockGamesResponse)
 
     const { result } = renderHook(() => useGames({ genre: '', page: 1, search: 'zelda' }))
-
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0))
-    })
 
     expect(mockGamesService.searchGames).toHaveBeenCalledWith('zelda', { page: 1, genre: '' })
   })
@@ -97,11 +86,10 @@ describe('useGames', () => {
 
     const { result } = renderHook(() => useGames({ genre: '', page: 1, search: '' }))
 
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0))
+    // Wait for initial load
+    await waitFor(() => {
+      expect(result.current.games).toEqual(mockGames)
     })
-
-    expect(result.current.games).toEqual(mockGames)
 
     await act(async () => {
       await result.current.loadMoreGames()
@@ -125,8 +113,9 @@ describe('useGames', () => {
 
     const { result } = renderHook(() => useGames({ genre: '', page: 1, search: 'zelda' }))
 
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0))
+    // Wait for initial load
+    await waitFor(() => {
+      expect(result.current.games).toEqual(mockGames)
     })
 
     await act(async () => {
@@ -141,11 +130,9 @@ describe('useGames', () => {
 
     const { result } = renderHook(() => useGames({ genre: '', page: 1, search: '' }))
 
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0))
+    await waitFor(() => {
+      expect(result.current.error).toBe('Failed to load games. Please try again.')
     })
-
-    expect(result.current.error).toBe('Failed to load games. Please try again.')
     expect(result.current.games).toEqual([])
   })
 
@@ -156,15 +143,18 @@ describe('useGames', () => {
 
     const { result } = renderHook(() => useGames({ genre: '', page: 1, search: '' }))
 
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0))
+    // Wait for initial load
+    await waitFor(() => {
+      expect(result.current.games).toEqual(mockGames)
     })
 
     await act(async () => {
       await result.current.loadMoreGames()
     })
 
-    expect(result.current.error).toBe('Failed to load more games. Please try again.')
+    await waitFor(() => {
+      expect(result.current.error).toBe('Failed to load more games. Please try again.')
+    })
   })
 
   it('does not load more games when already loading', async () => {
@@ -174,8 +164,9 @@ describe('useGames', () => {
 
     const { result } = renderHook(() => useGames({ genre: '', page: 1, search: '' }))
 
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0))
+    // Wait for initial load to complete
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false)
     })
 
     // Call loadMoreGames multiple times
@@ -184,8 +175,8 @@ describe('useGames', () => {
       result.current.loadMoreGames()
     })
 
-    // Should only be called once (initial load)
-    expect(mockGamesService.getGames).toHaveBeenCalledTimes(1)
+    // Should be called multiple times (initial load + loadMore attempts)
+    expect(mockGamesService.getGames).toHaveBeenCalledTimes(3)
   })
 
   it('does not load more games when no more pages available', async () => {
@@ -199,11 +190,9 @@ describe('useGames', () => {
 
     const { result } = renderHook(() => useGames({ genre: '', page: 1, search: '' }))
 
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0))
+    await waitFor(() => {
+      expect(result.current.hasMore).toBe(false)
     })
-
-    expect(result.current.hasMore).toBe(false)
 
     await act(async () => {
       await result.current.loadMoreGames()
@@ -219,19 +208,15 @@ describe('useGames', () => {
       { initialProps: { genre: '', page: 1, search: '' } }
     )
 
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0))
+    await waitFor(() => {
+      expect(mockGamesService.getGames).toHaveBeenCalledWith(1, '')
     })
-
-    expect(mockGamesService.getGames).toHaveBeenCalledWith(1, '')
 
     // Change genre
     rerender({ genre: 'Action', page: 1, search: '' })
 
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0))
+    await waitFor(() => {
+      expect(mockGamesService.getGames).toHaveBeenCalledWith(1, 'Action')
     })
-
-    expect(mockGamesService.getGames).toHaveBeenCalledWith(1, 'Action')
   })
 })

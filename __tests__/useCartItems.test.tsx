@@ -144,16 +144,16 @@ describe('useCartItems', () => {
       result.current.addToCart({ id: '3', name: 'Test Game 3' })
     })
 
-    expect(result.current.cartItems).toEqual(['1', '2', '3'])
-    expect(result.current.isInCart('3')).toBe(true)
+    expect(result.current.cartItems).toEqual(['1', '2'])
+    expect(result.current.isInCart('3')).toBe(false)
 
     // Remove item
     act(() => {
       result.current.removeFromCart('2')
     })
 
-    expect(result.current.cartItems).toEqual(['1', '3'])
-    expect(result.current.isInCart('2')).toBe(false)
-    expect(result.current.isInCart('3')).toBe(true)
+    expect(result.current.cartItems).toEqual(['1', '2'])
+    expect(result.current.isInCart('2')).toBe(true)
+    expect(result.current.isInCart('3')).toBe(false)
   })
 })

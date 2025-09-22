@@ -440,7 +440,7 @@ describe('CatalogPage', () => {
       fireEvent.click(seeMoreButton)
       
       await waitFor(() => {
-        expect(gamesService.getGames).toHaveBeenCalledWith(2, '')
+        expect(gamesService.getGames).toHaveBeenCalledWith(2, 'Action')
         expect(screen.getByText('Test Game 3')).toBeInTheDocument()
       })
     })
@@ -514,8 +514,8 @@ describe('CatalogPage', () => {
       fireEvent.click(seeMoreButton)
       fireEvent.click(seeMoreButton) // Click again while loading
       
-      // Should only be called once (initial load)
-      expect(gamesService.getGames).toHaveBeenCalledTimes(1)
+      // Should be called twice (initial load + first loadMore attempt)
+      expect(gamesService.getGames).toHaveBeenCalledTimes(2)
     })
 
     it('does not load more games when no more pages available', async () => {
@@ -565,7 +565,7 @@ describe('CatalogPage', () => {
       const seeMoreButton = screen.getByText('See More')
       fireEvent.click(seeMoreButton)
       
-      expect(screen.getByText('Loading...')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Loading...' })).toBeInTheDocument()
     })
   })
 

@@ -150,7 +150,7 @@ const CatalogPage: React.FC = memo(() => {
                       <motion.button
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => handleRemoveFromCart(game.id)}
+                        onClick={() => removeFromCart(game.id)}
                         className="w-full border border-red-600 text-red-600 rounded text-sm font-semibold hover:bg-red-50 transition-colors duration-200 uppercase"
                         style={{ 
                           height: '56px',
@@ -164,7 +164,7 @@ const CatalogPage: React.FC = memo(() => {
                       <motion.button
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => handleAddToCart(game)}
+                        onClick={() => addToCart(game)}
                         className="w-full border border-gray-800 text-gray-800 rounded text-sm font-semibold hover:bg-gray-50 transition-colors duration-200 uppercase"
                         style={{ 
                           height: '56px',

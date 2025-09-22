@@ -85,6 +85,12 @@ const CartPage: React.FC<CartPageProps> = memo(() => {
           <div className="max-w-7xl mx-auto">
             <div className="text-center py-12">
               <p className="text-lg text-red-600">{error}</p>
+              <Link
+                href="/catalog"
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200 mt-4"
+              >
+                Back to Catalog
+              </Link>
             </div>
           </div>
         </Container>

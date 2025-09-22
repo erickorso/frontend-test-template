@@ -8,6 +8,7 @@ jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) => React.createElement('div', props, children),
     button: ({ children, ...props }: any) => React.createElement('button', props, children),
+    input: ({ children, ...props }: any) => React.createElement('input', props, children),
   },
   AnimatePresence: ({ children }: any) => React.createElement(React.Fragment, null, children),
 }))
