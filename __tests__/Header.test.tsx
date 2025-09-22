@@ -54,13 +54,14 @@ describe('Header', () => {
   it('renders first row with logo and cart icon', () => {
     renderWithProvider(<Header />)
     
-    const logoLink = screen.getByRole('link', { name: 'GamerShop' })
+    const logoLink = screen.getByRole('link', { name: 'ErickShop' })
     expect(logoLink).toBeInTheDocument()
     expect(logoLink).toHaveAttribute('href', '/')
     expect(logoLink).toHaveClass('text-gray-800', 'text-2xl', 'font-bold')
     
-    const cartButton = screen.getByLabelText(/Shopping cart with \d+ items/)
-    expect(cartButton).toBeInTheDocument()
+    const cartButtons = screen.getAllByLabelText(/Shopping cart with \d+ items/)
+    expect(cartButtons).toHaveLength(2) // Should have 2 cart buttons (one in each row)
+    expect(cartButtons[0]).toBeInTheDocument()
   })
 
   it('renders second row with title, search and genre filter', () => {
@@ -84,14 +85,19 @@ describe('Header', () => {
   it('has correct first row styling', () => {
     renderWithProvider(<Header />)
     
-    const firstRow = screen.getByText('GamerShop').closest('div')?.parentElement
-    expect(firstRow).toHaveClass('flex', 'justify-between', 'items-center', 'h-16', 'bg-white', 'shadow-sm')
+    // Check the outer div (parent of Container) - this is the div with bg-white
+    const firstRow = screen.getByText('ErickShop').closest('div')?.parentElement
+    expect(firstRow).toHaveClass('bg-white', 'relative', 'z-10', 'h-16')
+    
+    // Check the Container div (direct parent of logo)
+    const containerDiv = screen.getByText('ErickShop').closest('div')
+    expect(containerDiv).toHaveClass('flex', 'justify-between', 'items-center', 'h-16')
   })
 
   it('has correct second row styling', () => {
     renderWithProvider(<Header />)
     
-    const secondRow = screen.getByText('Top Sellers').closest('div')?.parentElement
+    const secondRow = screen.getByText('Top Sellers').closest('div')?.parentElement?.parentElement
     expect(secondRow).toHaveClass('bg-gray-100', 'py-4', 'shadow-md')
   })
 

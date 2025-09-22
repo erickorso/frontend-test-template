@@ -2,15 +2,11 @@ import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import CartPage from '../src/app/cart/page'
-import { cartService } from '../src/services/cartService'
+import { useCart } from '../src/hooks/useCart'
 
-// Mock the cart service
-jest.mock('../src/services/cartService', () => ({
-  cartService: {
-    getCartItems: jest.fn(),
-    removeFromCart: jest.fn(),
-    getCartSummary: jest.fn(),
-  },
+// Mock the useCart hook
+jest.mock('../src/hooks/useCart', () => ({
+  useCart: jest.fn(),
 }))
 
 // Mock Next.js components
@@ -30,7 +26,7 @@ jest.mock('next/image', () => {
   }
 })
 
-const mockCartService = cartService as jest.Mocked<typeof cartService>
+const mockUseCart = useCart as jest.MockedFunction<typeof useCart>
 
 const mockCartItems = [
   {
@@ -56,7 +52,6 @@ const mockCartItems = [
 ]
 
 const mockCartSummary = {
-  items: mockCartItems,
   totalItems: 3,
   totalPrice: 139.97,
 }
@@ -64,187 +59,187 @@ const mockCartSummary = {
 describe('CartPage', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseCart.mockReturnValue({
+      cartItems: [],
+      totalItems: 0,
+      totalPrice: 0,
+      isLoading: false,
+      error: null,
+      removeFromCart: jest.fn(),
+      updateCartItemQuantity: jest.fn(),
+      refreshCart: jest.fn(),
+    })
   })
 
   it('renders loading state initially', () => {
-    // Mock to return empty array immediately but test loading state
-    mockCartService.getCartItems.mockReturnValue([])
-    mockCartService.getCartSummary.mockReturnValue({
-      items: [],
+    mockUseCart.mockReturnValue({
+      cartItems: [],
       totalItems: 0,
       totalPrice: 0,
+      isLoading: true,
+      error: null,
+      removeFromCart: jest.fn(),
+      updateCartItemQuantity: jest.fn(),
+      refreshCart: jest.fn(),
     })
 
     render(<CartPage />)
     
-    // Since the component loads immediately, we should see the empty cart state
-    expect(screen.getByText('Your cart is empty')).toBeInTheDocument()
+    expect(screen.getByText('Shopping Cart')).toBeInTheDocument()
+    expect(screen.getAllByText('Loading...')).toHaveLength(4) // 3 cart item skeletons + 1 order summary skeleton
   })
 
-  it('renders empty cart when no items', async () => {
-    mockCartService.getCartItems.mockReturnValue([])
-    mockCartService.getCartSummary.mockReturnValue({
-      items: [],
+  it('renders empty cart when no items', () => {
+    mockUseCart.mockReturnValue({
+      cartItems: [],
       totalItems: 0,
       totalPrice: 0,
+      isLoading: false,
+      error: null,
+      removeFromCart: jest.fn(),
+      updateCartItemQuantity: jest.fn(),
+      refreshCart: jest.fn(),
     })
 
     render(<CartPage />)
     
-    await waitFor(() => {
-      expect(screen.getByText('Your cart is empty')).toBeInTheDocument()
-      expect(screen.getByText('Add some games to get started!')).toBeInTheDocument()
-      expect(screen.getByText('Back to Catalog')).toBeInTheDocument()
-    })
+    expect(screen.getByText('Your cart is empty.')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Back to Catalog' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Back to Catalog' })).toHaveAttribute('href', '/catalog')
   })
 
-  it('renders cart items correctly', async () => {
-    mockCartService.getCartItems.mockReturnValue(mockCartItems)
-    mockCartService.getCartSummary.mockReturnValue(mockCartSummary)
+  it('renders cart items when cart has items', () => {
+    mockUseCart.mockReturnValue({
+      cartItems: mockCartItems,
+      totalItems: mockCartSummary.totalItems,
+      totalPrice: mockCartSummary.totalPrice,
+      isLoading: false,
+      error: null,
+      removeFromCart: jest.fn(),
+      updateCartItemQuantity: jest.fn(),
+      refreshCart: jest.fn(),
+    })
 
     render(<CartPage />)
     
-    await waitFor(() => {
-      expect(screen.getByText('Shopping Cart')).toBeInTheDocument()
-      expect(screen.getByText('2 items in your cart')).toBeInTheDocument()
-      expect(screen.getAllByText('Test Game 1')).toHaveLength(2) // One in cart item, one in summary
-      expect(screen.getAllByText('Test Game 2')).toHaveLength(2) // One in cart item, one in summary
-      expect(screen.getByText('Test description 1')).toBeInTheDocument()
-      expect(screen.getByText('Test description 2')).toBeInTheDocument()
-    })
+    expect(screen.getAllByText('Test Game 1')).toHaveLength(2) // Item title and order summary
+    expect(screen.getAllByText('Test Game 2')).toHaveLength(2) // Item title and order summary
+    expect(screen.getAllByText('$59.99')).toHaveLength(2) // Item price and order summary
+    expect(screen.getAllByText('$39.99')).toHaveLength(1) // Item price
+    expect(screen.getAllByText('$139.97')).toHaveLength(2) // Order summary total and final total
   })
 
-  it('displays game details correctly', async () => {
-    mockCartService.getCartItems.mockReturnValue(mockCartItems)
-    mockCartService.getCartSummary.mockReturnValue(mockCartSummary)
+  it('renders error state when there is an error', () => {
+    mockUseCart.mockReturnValue({
+      cartItems: [],
+      totalItems: 0,
+      totalPrice: 0,
+      isLoading: false,
+      error: 'Error loading cart items.',
+      removeFromCart: jest.fn(),
+      updateCartItemQuantity: jest.fn(),
+      refreshCart: jest.fn(),
+    })
 
     render(<CartPage />)
     
-    await waitFor(() => {
-      expect(screen.getByText('Genre: Action')).toBeInTheDocument()
-      expect(screen.getByText('Genre: RPG')).toBeInTheDocument()
-      expect(screen.getAllByText('Qty: 1')).toHaveLength(2) // One in cart item, one in summary
-      expect(screen.getAllByText('Qty: 2')).toHaveLength(2) // One in cart item, one in summary
-      expect(screen.getByText('New')).toBeInTheDocument()
-    })
+    expect(screen.getByText('Error loading cart items.')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Back to Catalog' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Back to Catalog' })).toHaveAttribute('href', '/catalog')
   })
 
-  it('displays prices correctly', async () => {
-    mockCartService.getCartItems.mockReturnValue(mockCartItems)
-    mockCartService.getCartSummary.mockReturnValue(mockCartSummary)
+  it('calls removeFromCart when remove button is clicked', () => {
+    const mockRemoveFromCart = jest.fn()
+    mockUseCart.mockReturnValue({
+      cartItems: mockCartItems,
+      totalItems: mockCartSummary.totalItems,
+      totalPrice: mockCartSummary.totalPrice,
+      isLoading: false,
+      error: null,
+      removeFromCart: mockRemoveFromCart,
+      updateCartItemQuantity: jest.fn(),
+      refreshCart: jest.fn(),
+    })
 
     render(<CartPage />)
     
-    await waitFor(() => {
-      expect(screen.getAllByText('$59.99')).toHaveLength(2) // One in cart item, one in summary
-      expect(screen.getByText('$39.99')).toBeInTheDocument()
-      expect(screen.getByText('$79.98 total')).toBeInTheDocument() // 39.99 * 2
-    })
-  })
-
-  it('displays order summary correctly', async () => {
-    mockCartService.getCartItems.mockReturnValue(mockCartItems)
-    mockCartService.getCartSummary.mockReturnValue(mockCartSummary)
-
-    render(<CartPage />)
-    
-    await waitFor(() => {
-      expect(screen.getByText('Order Summary')).toBeInTheDocument()
-      expect(screen.getByText('Total Items:')).toBeInTheDocument()
-      expect(screen.getByText('3')).toBeInTheDocument()
-      expect(screen.getByText('Total:')).toBeInTheDocument()
-      expect(screen.getByText('$139.97')).toBeInTheDocument()
-    })
-  })
-
-  it('handles remove item from cart', async () => {
-    mockCartService.getCartItems.mockReturnValue(mockCartItems)
-    mockCartService.getCartSummary.mockReturnValue(mockCartSummary)
-
-    render(<CartPage />)
-    
-    await waitFor(() => {
-      expect(screen.getAllByText('Test Game 1')).toHaveLength(2) // One in cart item, one in summary
-    })
-
-    const removeButtons = screen.getAllByLabelText(/Remove .* from cart/)
+    const removeButtons = screen.getAllByLabelText(/Remove.*from cart/)
     fireEvent.click(removeButtons[0])
-
-    expect(mockCartService.removeFromCart).toHaveBeenCalledWith('1')
+    
+    expect(mockRemoveFromCart).toHaveBeenCalledWith('1')
   })
 
-  it('renders back to catalog button', async () => {
-    mockCartService.getCartItems.mockReturnValue(mockCartItems)
-    mockCartService.getCartSummary.mockReturnValue(mockCartSummary)
+  it('calls updateCartItemQuantity when quantity is changed', () => {
+    const mockUpdateCartItemQuantity = jest.fn()
+    mockUseCart.mockReturnValue({
+      cartItems: mockCartItems,
+      totalItems: mockCartSummary.totalItems,
+      totalPrice: mockCartSummary.totalPrice,
+      isLoading: false,
+      error: null,
+      removeFromCart: jest.fn(),
+      updateCartItemQuantity: mockUpdateCartItemQuantity,
+      refreshCart: jest.fn(),
+    })
 
     render(<CartPage />)
     
-    await waitFor(() => {
-      const backToCatalogButtons = screen.getAllByText('Back to Catalog')
-      expect(backToCatalogButtons).toHaveLength(1) // Only one in order summary when cart has items
-      
-      // Check that the back button links to home
-      const backButton = backToCatalogButtons[0]
-      expect(backButton.closest('a')).toHaveAttribute('href', '/')
-    })
+    const quantityInput = screen.getByLabelText('Quantity for Test Game 1')
+    fireEvent.change(quantityInput, { target: { value: '3' } })
+    
+    expect(mockUpdateCartItemQuantity).toHaveBeenCalledWith('1', 3)
   })
 
-  it('renders checkout button', async () => {
-    mockCartService.getCartItems.mockReturnValue(mockCartItems)
-    mockCartService.getCartSummary.mockReturnValue(mockCartSummary)
+  it('displays correct total items and price in order summary', () => {
+    mockUseCart.mockReturnValue({
+      cartItems: mockCartItems,
+      totalItems: mockCartSummary.totalItems,
+      totalPrice: mockCartSummary.totalPrice,
+      isLoading: false,
+      error: null,
+      removeFromCart: jest.fn(),
+      updateCartItemQuantity: jest.fn(),
+      refreshCart: jest.fn(),
+    })
 
     render(<CartPage />)
     
-    await waitFor(() => {
-      expect(screen.getByText('Proceed to Checkout')).toBeInTheDocument()
-    })
+    expect(screen.getByText('Items (3)')).toBeInTheDocument()
+    expect(screen.getAllByText('$139.97')).toHaveLength(2) // Order summary total and final total
   })
 
-  it('handles error when loading cart items', async () => {
-    mockCartService.getCartItems.mockImplementation(() => {
-      throw new Error('Failed to load cart')
+  it('displays New badge for new items', () => {
+    mockUseCart.mockReturnValue({
+      cartItems: mockCartItems,
+      totalItems: mockCartSummary.totalItems,
+      totalPrice: mockCartSummary.totalPrice,
+      isLoading: false,
+      error: null,
+      removeFromCart: jest.fn(),
+      updateCartItemQuantity: jest.fn(),
+      refreshCart: jest.fn(),
     })
-    mockCartService.getCartSummary.mockReturnValue({
-      items: [],
-      totalItems: 0,
-      totalPrice: 0,
-    })
-
-    // Mock console.error to avoid noise in test output
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
 
     render(<CartPage />)
     
-    await waitFor(() => {
-      expect(screen.getByText('Your cart is empty')).toBeInTheDocument()
-    })
-
-    expect(consoleSpy).toHaveBeenCalledWith('Error loading cart items:', expect.any(Error))
-    
-    consoleSpy.mockRestore()
+    expect(screen.getByText('New')).toBeInTheDocument()
   })
 
-  it('handles error when removing item', async () => {
-    mockCartService.getCartItems.mockReturnValue(mockCartItems)
-    mockCartService.getCartSummary.mockReturnValue(mockCartSummary)
-    mockCartService.removeFromCart.mockImplementation(() => {
-      throw new Error('Failed to remove item')
+  it('displays genre information for each item', () => {
+    mockUseCart.mockReturnValue({
+      cartItems: mockCartItems,
+      totalItems: mockCartSummary.totalItems,
+      totalPrice: mockCartSummary.totalPrice,
+      isLoading: false,
+      error: null,
+      removeFromCart: jest.fn(),
+      updateCartItemQuantity: jest.fn(),
+      refreshCart: jest.fn(),
     })
-
-    // Mock console.error to avoid noise in test output
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
 
     render(<CartPage />)
     
-    await waitFor(() => {
-      expect(screen.getAllByText('Test Game 1')).toHaveLength(2) // One in cart item, one in summary
-    })
-
-    const removeButtons = screen.getAllByLabelText(/Remove .* from cart/)
-    fireEvent.click(removeButtons[0])
-
-    expect(consoleSpy).toHaveBeenCalledWith('Error removing item from cart:', expect.any(Error))
-    
-    consoleSpy.mockRestore()
+    expect(screen.getByText('Genre: Action')).toBeInTheDocument()
+    expect(screen.getByText('Genre: RPG')).toBeInTheDocument()
   })
 })

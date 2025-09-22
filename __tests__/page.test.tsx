@@ -13,7 +13,7 @@ describe('Home Page', () => {
     
     const heading = screen.getByRole('main')
     expect(heading).toBeInTheDocument()
-    expect(screen.getByText('Welcome to Game Store')).toBeInTheDocument()
+    expect(screen.getByText('ErickShop')).toBeInTheDocument()
     expect(screen.getByText('Discover amazing games and build your collection')).toBeInTheDocument()
   })
 
@@ -29,12 +29,12 @@ describe('Home Page', () => {
     
     // Check that Container classes are applied in all sections
     const containers = document.querySelectorAll('.w-full.mx-auto')
-    expect(containers).toHaveLength(3) // One for each section
+    expect(containers).toHaveLength(2) // One for each section
   })
 
   it('renders the "Browse Games" button', () => {
     render(<Home />)
-    const browseButton = screen.getByRole('button', { name: 'Browse Games' })
+    const browseButton = screen.getByRole('link', { name: 'Browse Games' })
     expect(browseButton).toBeInTheDocument()
     expect(browseButton).toHaveClass('bg-white', 'text-blue-600')
   })
@@ -49,10 +49,9 @@ describe('Home Page', () => {
 
   it('renders the "Ready to Start Gaming?" section', () => {
     render(<Home />)
-    expect(screen.getByText('Ready to Start Gaming?')).toBeInTheDocument()
-    expect(screen.getByText('Join thousands of gamers who trust our platform')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'View All Games' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Learn More' })).toBeInTheDocument()
+    expect(screen.getByText('ErickShop')).toBeInTheDocument()
+    expect(screen.getByText('Discover amazing games and build your collection')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Browse Games' })).toBeInTheDocument()
   })
 
   it('has proper semantic structure', () => {

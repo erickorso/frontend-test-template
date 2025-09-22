@@ -1,6 +1,6 @@
 'use client'
 
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo } from 'react'
 import { motion } from 'framer-motion'
 
 export const dynamic = 'force-dynamic'
@@ -9,116 +9,22 @@ import Image from 'next/image'
 import { Container } from '../../components/Container'
 import { GameCardSkeleton } from '../../components/Skeleton'
 import { PageTransition } from '../../components/PageTransition'
-import { Game } from '../../utils/endpoint'
-import { cartService } from '../../services/cartService'
-import { gamesService, GamesResponse } from '../../services/gamesService'
+import { useGames, useCartItems } from '../../hooks'
 
 const CatalogPage: React.FC = memo(() => {
-  const [games, setGames] = useState<Game[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [hasMore, setHasMore] = useState(false)
-  const [cartItems, setCartItems] = useState<string[]>([])
-  const [isFilterLoading, setIsFilterLoading] = useState(false)
-  
   const searchParams = useSearchParams()
   const router = useRouter()
   const genre = searchParams.get('genre') || ''
   const search = searchParams.get('search') || ''
   const page = parseInt(searchParams.get('page') || '1')
 
-  // Load cart items on component mount
-  useEffect(() => {
-    const loadCartItems = () => {
-      try {
-        const items = cartService.getCartItems()
-        setCartItems(items.map(item => item.id))
-      } catch (error) {
-        console.error('Error loading cart items:', error)
-      }
-    }
-    loadCartItems()
-  }, [])
+  const { games, isLoading, isFilterLoading, error, currentPage, hasMore, loadMoreGames } = useGames({
+    genre,
+    page,
+    search
+  })
 
-  // Load games when URL params change
-  useEffect(() => {
-    const loadGames = async () => {
-      try {
-        setIsLoading(true)
-        setIsFilterLoading(true)
-        setError(null)
-        
-        // Add minimum delay to show skeleton
-        const [data] = await Promise.all([
-          (async () => {
-            if (search && search.trim()) {
-              return await gamesService.searchGames(search, { page, genre })
-            } else {
-              return await gamesService.getGames(page, genre)
-            }
-          })(),
-          new Promise(resolve => setTimeout(resolve, 1000)) // Minimum 1 second delay
-        ])
-        
-        setGames(data.games)
-        setCurrentPage(data.currentPage)
-        setHasMore(data.currentPage < data.totalPages)
-      } catch (err) {
-        setError('Failed to load games. Please try again.')
-        console.error('Error loading games:', err)
-      } finally {
-        setIsLoading(false)
-        setIsFilterLoading(false)
-      }
-    }
-
-    loadGames()
-  }, [genre, page, search])
-
-  const handleAddToCart = (game: Game) => {
-    try {
-      cartService.addToCart(game)
-      setCartItems(prev => [...prev, game.id])
-    } catch (error) {
-      console.error('Error adding to cart:', error)
-    }
-  }
-
-  const handleRemoveFromCart = (gameId: string) => {
-    try {
-      cartService.removeFromCart(gameId)
-      setCartItems(prev => prev.filter(id => id !== gameId))
-    } catch (error) {
-      console.error('Error removing from cart:', error)
-    }
-  }
-
-  const isInCart = (gameId: string) => cartItems.includes(gameId)
-
-  const loadMoreGames = async () => {
-    if (isLoading || !hasMore) return
-    
-    try {
-      setIsLoading(true)
-      const nextPage = currentPage + 1
-      let data: GamesResponse
-      if (search && search.trim()) {
-        data = await gamesService.searchGames(search, { page: nextPage, genre })
-      } else {
-        data = await gamesService.getGames(nextPage, genre)
-      }
-      
-      setGames(prev => [...prev, ...data.games])
-      setCurrentPage(data.currentPage)
-      setHasMore(data.currentPage < data.totalPages)
-    } catch (err) {
-      setError('Failed to load more games. Please try again.')
-      console.error('Error loading more games:', err)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const { isInCart, addToCart, removeFromCart } = useCartItems()
 
   // Function to remove search filter
   const removeSearchFilter = () => {
@@ -188,7 +94,7 @@ const CatalogPage: React.FC = memo(() => {
 
           {/* Skeleton loading for initial load */}
           {isLoading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8 animate-fadeIn">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 animate-fadeIn">
               {Array.from({ length: 8 }).map((_, index) => (
                 <GameCardSkeleton key={index} />
               ))}
@@ -197,7 +103,7 @@ const CatalogPage: React.FC = memo(() => {
 
           {/* Game Grid */}
           {!isLoading && games.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {games.map((game, index) => (
                 <motion.div
                   key={game.id}
@@ -221,8 +127,8 @@ const CatalogPage: React.FC = memo(() => {
                       src={game.image}
                       alt={game.name}
                       width={400}
-                      height={192}
-                      className="w-full h-48 object-cover rounded-t"
+                      height={240}
+                      className="w-full h-60 object-cover rounded-t"
                     />
                     {game.isNew && (
                       <span className="absolute top-4 left-4 bg-white text-gray-800 text-xs font-bold px-2 py-1 rounded border border-gray-200">
@@ -244,7 +150,7 @@ const CatalogPage: React.FC = memo(() => {
                       <motion.button
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => handleRemoveFromCart(game.id)}
+                        onClick={() => removeFromCart(game.id)}
                         className="w-full border border-red-600 text-red-600 rounded text-sm font-semibold hover:bg-red-50 transition-colors duration-200 uppercase"
                         style={{ 
                           height: '56px',
@@ -258,7 +164,7 @@ const CatalogPage: React.FC = memo(() => {
                       <motion.button
                         whileHover={{ scale: 1.02, y: -2 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => handleAddToCart(game)}
+                        onClick={() => addToCart(game)}
                         className="w-full border border-gray-800 text-gray-800 rounded text-sm font-semibold hover:bg-gray-50 transition-colors duration-200 uppercase"
                         style={{ 
                           height: '56px',

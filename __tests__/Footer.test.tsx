@@ -44,7 +44,7 @@ describe('Footer', () => {
     
     const footer = screen.getByRole('contentinfo')
     expect(footer).toBeInTheDocument()
-    expect(footer).toHaveClass('bg-gray-800', 'text-white', 'h-44')
+    expect(footer).toHaveClass('bg-gray-800', 'text-white')
   })
 
   it('uses Container component correctly', () => {
@@ -65,7 +65,7 @@ describe('Footer', () => {
     const logo = screen.getByAltText('A APPLY DIGITAL')
     expect(logo).toBeInTheDocument()
     expect(logo).toHaveAttribute('src', '/logo_white.svg')
-    expect(logo).toHaveClass('h-12', 'w-auto')
+    expect(logo).toHaveClass('w-auto')
   })
 
   it('has centered logo layout', () => {

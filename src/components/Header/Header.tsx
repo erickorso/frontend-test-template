@@ -65,7 +65,7 @@ const Header: React.FC = memo(() => {
         }`}>
           {/* GamerShop Logo */}
           <Link href="/" className="text-gray-800 text-2xl font-bold hover:text-blue-600 transition-colors duration-200">
-            GamerShop
+            ErickShop
           </Link>
           
           {/* Cart Icon - Only visible when not scrolled */}
