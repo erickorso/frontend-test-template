@@ -87,7 +87,7 @@ export const useCart = (): UseCartReturn => {
 
   const updateCartItemQuantity = (gameId: string, quantity: number) => {
     try {
-      cartService.updateCartItemQuantity(gameId, quantity)
+      cartService.updateQuantity(gameId, quantity)
       refreshCart()
     } catch (error) {
       console.error('Error updating cart item quantity:', error)
