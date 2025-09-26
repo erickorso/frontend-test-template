@@ -5,277 +5,169 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/features/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
+      // Design System Colors
       colors: {
+        // Primary Colors
         primary: {
-          DEFAULT: "#111827", // slate-900
+          50: "#f8fafc",
+          100: "#f1f5f9",
+          200: "#e2e8f0",
+          300: "#cbd5e1",
+          400: "#94a3b8",
+          500: "#64748b",
+          600: "#475569",
+          700: "#334155",
+          800: "#1e293b",
+          900: "#0f172a",
         },
-        headline: "#585660", // from Figma
-        secondary: {
-          DEFAULT: "#374151", // gray-700
+        // Brand Colors
+        brand: {
+          primary: "#585660",
+          secondary: "#3B3B3B",
+          accent: "#3B82F6",
+          success: "#22C55E",
+          warning: "#F59E0B",
+          error: "#EF4444",
         },
-        accent: {
-          DEFAULT: "#3B82F6", // blue-500
+        // Semantic Colors
+        surface: {
+          primary: "#FFFFFF",
+          secondary: "#F9FAFB",
+          tertiary: "#F3F4F6",
         },
-        success: {
-          DEFAULT: "#22C55E", // green-500
+        text: {
+          primary: "#111827",
+          secondary: "#6B7280",
+          tertiary: "#9CA3AF",
+          inverse: "#FFFFFF",
         },
-        warning: {
-          DEFAULT: "#F59E0B", // amber-500
+        border: {
+          primary: "#E5E7EB",
+          secondary: "#D1D5DB",
+          focus: "#3B82F6",
         },
-        error: {
-          DEFAULT: "#EF4444", // red-500
-        },
-        bg: "#F9FAFB", // gray-50
-        surface: "#FFFFFF",
-        border: "#E5E7EB", // gray-200
-        text: "#111827", // slate-900
-        muted: "#6B7280", // gray-500
-        topSellers: "#3B3B3B",
-        genreNav: "#3B3B3B",
-        cardGenre: "#737373",
-        cardProductName: "#3B3B3B",
-        btnCtaFill: "#585660",
-        btnCtaContent: "#FFFFFF",
-        btnCtaHoverFill: "#3B3B3B",
-        footer: "#404040",
-        logo: "#FFFFFF",
-        cartCounter: "#3B3B3B",
-        backLink: "#3B3B3B",
-        cartDesc: "#737373",
-        removeBtn: "#8F8F8F",
-        orderSummary: "#3B3B3B",
-        summaryProduct: "#3B3B3B",
-        orderTotal: "#3B3B3B",
-        summaryPrice: "#3B3B3B",
-        checkoutText: "#FFFFFF",
-        checkoutBtn: "#585660",
-        checkoutBtnHoverFill: "#3B3B3B",
-        cardPrice: "#3B3B3B",
-        badgeNew: "#3B3B3B",
-        seeMore: "#FFFFFF",
-        seeMoreHover: "#E5E7EB",
-        loading: "#3B3B3B",
-        select: "#3B3B3B",
-        selectBg: "#FFFFFF",
-        selectFocus: "#3B82F6",
-        icon: "#3B3B3B",
-        iconHover: "#585660",
-        errorText: "#EF4444",
-        errorBg: "#FEF2F2",
-        empty: "#6B7280",
-        emptyBg: "#F9FAFB",
       },
-      borderRadius: {
-        sm: "var(--radius-sm)",
-        md: "var(--radius-md)",
-        lg: "var(--radius-lg)",
-        btnCta: "var(--btn-cta-radius)",
-        checkoutBtn: "var(--checkout-btn-radius)",
-        select: "var(--select-radius)",
-      },
-      fontFamily: {
-        sans: ["var(--font-sans)"],
-        archivo: ["var(--font-archivo)"],
-      },
+      
+      // Typography Scale
       fontSize: {
-        display: "var(--fs-display)",
-        h1: "var(--fs-h1)",
-        h2: "var(--fs-h2)",
-        h3: "var(--fs-h3)",
-        body: "var(--fs-body)",
-        caption: "var(--fs-caption)",
-        header: "var(--fs-header)",
-        topSellers: "var(--fs-top-sellers)",
-        genreNav: "var(--fs-genre-nav)",
-        cardGenre: "var(--fs-card-genre)",
-        cardProductName: "var(--fs-card-product-name)",
-        btnCta: "var(--btn-cta-fs)",
-        cartCounter: "var(--cart-counter-fs)",
-        backLink: "var(--back-link-fs)",
-        cartDesc: "var(--cart-desc-fs)",
-        orderSummary: "var(--order-summary-fs)",
-        summaryProduct: "var(--summary-product-fs)",
-        orderTotal: "var(--order-total-fs)",
-        summaryPrice: "var(--summary-price-fs)",
-        checkoutText: "var(--checkout-text-fs)",
-        cardPrice: "var(--card-price-fs)",
-        badgeNew: "var(--badge-new-fs)",
-        seeMore: "var(--see-more-fs)",
-      },
-      letterSpacing: {
-        header: "var(--ls-header)",
-        topSellers: "var(--ls-top-sellers)",
-        genreNav: "var(--ls-genre-nav)",
-        cardGenre: "var(--ls-card-genre)",
-        cardProductName: "var(--ls-card-product-name)",
-        btnCta: "var(--btn-cta-ls)",
-        cartCounter: "var(--cart-counter-ls)",
-        backLink: "var(--back-link-ls)",
-        cartDesc: "var(--cart-desc-ls)",
-        orderSummary: "var(--order-summary-ls)",
-        summaryProduct: "var(--summary-product-ls)",
-        orderTotal: "var(--order-total-ls)",
-        summaryPrice: "var(--summary-price-ls)",
-        checkoutText: "var(--checkout-text-ls)",
-        cardPrice: "var(--card-price-ls)",
-        badgeNew: "var(--badge-new-ls)",
-        seeMore: "var(--see-more-ls)",
-      },
-      lineHeight: {
-        header: "var(--lh-header)",
-        topSellers: "var(--lh-top-sellers)",
-        genreNav: "var(--lh-genre-nav)",
-        cardGenre: "var(--lh-card-genre)",
-        cardProductName: "var(--lh-card-product-name)",
-        btnCta: "var(--btn-cta-lh)",
-        cartCounter: "var(--cart-counter-lh)",
-        backLink: "var(--back-link-lh)",
-        cartDesc: "var(--cart-desc-lh)",
-        orderSummary: "var(--order-summary-lh)",
-        summaryProduct: "var(--summary-product-lh)",
-        orderTotal: "var(--order-total-lh)",
-        summaryPrice: "var(--summary-price-lh)",
-        checkoutText: "var(--checkout-text-lh)",
-        cardPrice: "var(--card-price-lh)",
-        badgeNew: "var(--badge-new-lh)",
-        seeMore: "var(--see-more-lh)",
-      },
-      fontWeight: {
-        header: "var(--fw-header)",
-        topSellers: "var(--fw-top-sellers)",
-        genreNav: "var(--fw-genre-nav)",
-        cardGenre: "var(--fw-card-genre)",
-        cardProductName: "var(--fw-card-product-name)",
-        btnCta: "var(--btn-cta-fw)",
-        cartCounter: "var(--cart-counter-fw)",
-        backLink: "var(--back-link-fw)",
-        cartDesc: "var(--cart-desc-fw)",
-        orderSummary: "var(--order-summary-fw)",
-        summaryProduct: "var(--summary-product-fw)",
-        orderTotal: "var(--order-total-fw)",
-        summaryPrice: "var(--summary-price-fw)",
-        checkoutText: "var(--checkout-text-fw)",
-        cardPrice: "var(--card-price-fw)",
-        badgeNew: "var(--badge-new-fw)",
-        seeMore: "var(--see-more-fw)",
+        'xs': ['0.75rem', { lineHeight: '1rem' }],
+        'sm': ['0.875rem', { lineHeight: '1.25rem' }],
+        'base': ['1rem', { lineHeight: '1.5rem' }],
+        'lg': ['1.125rem', { lineHeight: '1.75rem' }],
+        'xl': ['1.25rem', { lineHeight: '1.75rem' }],
+        '2xl': ['1.5rem', { lineHeight: '2rem' }],
+        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+        '5xl': ['3rem', { lineHeight: '1' }],
+        '6xl': ['3.75rem', { lineHeight: '1' }],
       },
       
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
-      borderColor: {
-        btnCta: "#3B3B3B",
-        select: "rgb(229 231 235)",
-        selectFocus: "var(--select-focus)",
-      },
-      borderWidth: {
-        btnCta: "var(--btn-cta-border-width)",
-        select: "1px",
-      },
-      backgroundColor: {
-        select: "var(--select-bg)",
-        error: "var(--error-bg)",
-        empty: "var(--empty-bg)",
-      },
-      opacity: {
-        hover: "var(--hover-opacity)",
-        disabled: "var(--disabled-opacity)",
-        seeMoreHover: "var(--see-more-hover-opacity)",
-      },
-      scale: {
-        hover: "var(--hover-scale)",
-        active: "var(--active-scale)",
-        cardHover: "var(--card-hover-scale)",
-        btnCtaHover: "var(--btn-cta-hover-scale)",
-        seeMoreHover: "var(--see-more-hover-scale)",
-        checkoutBtnHover: "var(--checkout-btn-hover-scale)",
-      },
-      boxShadow: {
-        card: "var(--shadow-card)",
-        focus: "var(--focus-ring)",
-        cardHover: "var(--card-hover-shadow)",
-        btnCtaHover: "var(--btn-cta-hover-shadow)",
-        checkoutBtnHover: "var(--checkout-btn-hover-shadow)",
-      },
-      padding: {
-        checkoutBtn: "var(--checkout-btn-padding)",
-        header: "var(--header-padding-y) var(--header-padding-x)",
-        section: "var(--section-padding-y) var(--section-padding-x)",
-        card: "var(--card-padding)",
-        footer: "var(--footer-padding)",
-        cart: "var(--cart-padding)",
-        select: "var(--select-padding)",
-      },
-      margin: {
-        card: "var(--card-margin)",
-      },
+      // Spacing Scale
       spacing: {
-        xs: "var(--spacing-xs)",
-        sm: "var(--spacing-sm)",
-        md: "var(--spacing-md)",
-        lg: "var(--spacing-lg)",
-        xl: "var(--spacing-xl)",
-        "2xl": "var(--spacing-2xl)",
-        "3xl": "var(--spacing-3xl)",
-        "4xl": "var(--spacing-4xl)",
-        "5xl": "var(--spacing-5xl)",
-        "6xl": "var(--spacing-6xl)",
-      },
-      width: {
-        logo: "var(--logo-width)",
-        removeBtn: "var(--remove-btn-size)",
-        checkoutBtn: "var(--checkout-btn-width)",
-        badgeNew: "var(--badge-new-width)",
-        seeMore: "var(--see-more-width)",
-        loading: "var(--loading-size)",
-        iconSm: "var(--icon-size-sm)",
-        iconMd: "var(--icon-size-md)",
-        iconLg: "var(--icon-size-lg)",
-      },
-      height: {
-        btnCta: "var(--btn-cta-height)",
-        footer: "var(--footer-height)",
-        logo: "var(--logo-height)",
-        removeBtn: "var(--remove-btn-size)",
-        checkoutBtn: "var(--checkout-btn-height)",
-        badgeNew: "var(--badge-new-height)",
-        seeMore: "var(--see-more-height)",
-        loading: "var(--loading-size)",
-        iconSm: "var(--icon-size-sm)",
-        iconMd: "var(--icon-size-md)",
-        iconLg: "var(--icon-size-lg)",
-      },
-      gap: {
-        checkoutBtn: "var(--checkout-btn-gap)",
-        header: "var(--header-gap)",
-        section: "var(--section-gap)",
-        card: "var(--card-gap)",
-        grid: "var(--grid-gap)",
-        gridSm: "var(--grid-gap-sm)",
-        footer: "var(--footer-gap)",
-        cart: "var(--cart-gap)",
-        cartItem: "var(--cart-item-gap)",
-      },
-      transitionProperty: {
-        card: "all",
-        btn: "all",
-      },
-      transitionDuration: {
-        card: "200ms",
-        btn: "200ms",
-      },
-      transitionTimingFunction: {
-        card: "ease-in-out",
-        btn: "ease-in-out",
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
       },
       
+      // Border Radius
+      borderRadius: {
+        'none': '0',
+        'sm': '0.125rem',
+        'DEFAULT': '0.25rem',
+        'md': '0.375rem',
+        'lg': '0.5rem',
+        'xl': '0.75rem',
+        '2xl': '1rem',
+        '3xl': '1.5rem',
+        'full': '9999px',
+      },
+      
+      // Box Shadows
+      boxShadow: {
+        'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        'DEFAULT': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+        'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+        'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+        '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
+        'inner': 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
+      },
+      
+      // Animation
+      animation: {
+        'fade-in': 'fadeIn 0.3s ease-out',
+        'slide-in': 'slideIn 0.3s ease-out',
+        'scale-in': 'scaleIn 0.3s ease-out',
+        'bounce-in': 'bounceIn 0.6s ease-out',
+      },
+      
+      // Keyframes
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideIn: {
+          '0%': { opacity: '0', transform: 'translateX(-20px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+        scaleIn: {
+          '0%': { opacity: '0', transform: 'scale(0.95)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        bounceIn: {
+          '0%': { opacity: '0', transform: 'scale(0.3)' },
+          '50%': { opacity: '1', transform: 'scale(1.05)' },
+          '70%': { transform: 'scale(0.9)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+      },
+      
+      // Transitions
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+      },
+      
+      // Z-Index Scale
+      zIndex: {
+        '60': '60',
+        '70': '70',
+        '80': '80',
+        '90': '90',
+        '100': '100',
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    // Custom plugin for design system utilities
+    function({ addUtilities, theme }: any) {
+      const newUtilities = {
+        '.text-balance': {
+          'text-wrap': 'balance',
+        },
+        '.scrollbar-hide': {
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+        },
+        '.focus-ring': {
+          '&:focus': {
+            outline: '2px solid transparent',
+            'outline-offset': '2px',
+            'box-shadow': `0 0 0 2px ${theme('colors.brand.accent')}`,
+          },
+        },
+      }
+      addUtilities(newUtilities)
+    },
+  ],
 };
+
 export default config;
